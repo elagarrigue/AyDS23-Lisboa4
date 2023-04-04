@@ -22,8 +22,8 @@ internal class SpotifyLocalStorageImpl(
         ARTIST_COLUMN,
         ALBUM_COLUMN,
         ALBUM_COLUMN,
-        RELEASE_DATE_PRECISION_COLUMN,
         RELEASE_DATE_COLUMN,
+        RELEASE_DATE_PRECISION_COLUMN,
         SPOTIFY_URL_COLUMN,
         IMAGE_URL_COLUMN
     )
@@ -53,8 +53,8 @@ internal class SpotifyLocalStorageImpl(
             put(NAME_COLUMN, song.songName)
             put(ARTIST_COLUMN, song.artistName)
             put(ALBUM_COLUMN, song.albumName)
-            put(RELEASE_DATE_PRECISION_COLUMN, song.releaseDatePrecision)
             put(RELEASE_DATE_COLUMN, song.releaseDate)
+            put(RELEASE_DATE_PRECISION_COLUMN, song.releaseDatePrecision)
             put(SPOTIFY_URL_COLUMN, song.spotifyUrl)
             put(IMAGE_URL_COLUMN, song.imageUrl)
         }
