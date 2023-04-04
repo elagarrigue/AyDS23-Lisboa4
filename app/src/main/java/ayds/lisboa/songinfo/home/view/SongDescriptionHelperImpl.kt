@@ -18,8 +18,23 @@ internal class SongDescriptionHelperImpl : SongDescriptionHelper {
                 }\n" +
                         "Artist: ${song.artistName}\n" +
                         "Album: ${song.albumName}\n" +
-                        "Year: ${song.year}"
+                        "Release date: ${buildReleaseDate(song)}"
             else -> "Song not found"
+        }
+    }
+
+    private fun buildReleaseDate(song: SpotifySong): String {
+        val releaseDate = song.releaseDate
+        val precision = song.releaseDatePrecision
+        val splitReleaseDate: List<String> = song.releaseDate.split("-");
+        val year = splitReleaseDate.first()
+        val month = splitReleaseDate.getOrNull(1)
+        val day = splitReleaseDate.getOrNull(2)
+        return when (precision) {
+            "year" -> year
+            "month" -> "${numberToMonthName(month?.toIntOrNull())}, $year"
+            "day" -> "${day}/${month}/${year}"
+            else -> ""
         }
     }
 }
