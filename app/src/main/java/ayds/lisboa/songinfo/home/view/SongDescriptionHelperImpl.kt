@@ -1,9 +1,8 @@
 package ayds.lisboa.songinfo.home.view
 
-import ayds.lisboa.songinfo.home.model.entities.Song.EmptySong
 import ayds.lisboa.songinfo.home.model.entities.Song
+import ayds.lisboa.songinfo.home.model.entities.Song.EmptySong
 import ayds.lisboa.songinfo.home.model.entities.Song.SpotifySong
-import ayds.lisboa.songinfo.home.view.ReleaseDateBuilder as ReleaseDate
 
 interface SongDescriptionHelper {
     fun getSongDescriptionText(song: Song = EmptySong): String
@@ -24,6 +23,7 @@ internal class SongDescriptionHelperImpl : SongDescriptionHelper {
         }\n" +
                 "Artist: ${song.artistName}\n" +
                 "Album: ${song.albumName}\n" +
-                "Release date: ${ReleaseDate.buildReleaseDate(song)}"
+                "Release date: ${ReleaseDateFactory.get(song).formatDate()}"
     }
+
 }
