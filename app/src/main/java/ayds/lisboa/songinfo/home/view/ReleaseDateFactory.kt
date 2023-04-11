@@ -7,12 +7,10 @@ import ayds.lisboa.songinfo.utils.DateUtils.isLeapYear
 object ReleaseDateFactory {
     fun get(song: SpotifySong) =
         when (song.releaseDatePrecision) {
-            "year" -> yearFormatter(song.releaseDate)
-            "month" -> monthFormatter(song.releaseDate)
-            "day" -> dayFormatter(song.releaseDate)
-            else
-            -> emptyFormatter(song.releaseDate)
-
+            "year" -> YearFormatter(song.releaseDate)
+            "month" -> MonthFormatter(song.releaseDate)
+            "day" -> DayFormatter(song.releaseDate)
+            else -> EmptyFormatter(song.releaseDate)
         }
 }
 
@@ -21,25 +19,24 @@ sealed class ReleaseDateFormatter(releaseDate: String) {
     abstract fun formatDate(): String
 }
 
-
-class dayFormatter(releaseDate: String) : ReleaseDateFormatter(releaseDate) {
+class DayFormatter(releaseDate: String) : ReleaseDateFormatter(releaseDate) {
     val year = splitReleaseDate.get(0)
     val month = splitReleaseDate.get(1)
     val day = splitReleaseDate.get(2)
     override fun formatDate() = "${day}/${month}/${year}"
 }
 
-class monthFormatter(releaseDate: String) : ReleaseDateFormatter(releaseDate) {
+class MonthFormatter(releaseDate: String) : ReleaseDateFormatter(releaseDate) {
     val year = splitReleaseDate.get(0)
     val month = splitReleaseDate.get(1)
     override fun formatDate() = "${DateUtils.numberToMonthName(month?.toIntOrNull())}, $year"
 }
 
-class yearFormatter(releaseDate: String) : ReleaseDateFormatter(releaseDate) {
+class YearFormatter(releaseDate: String) : ReleaseDateFormatter(releaseDate) {
     val year = splitReleaseDate.get(0)
-    override fun formatDate() = "${year}+${isLeapYear(year.toInt())}"
+    override fun formatDate() = "$year ${isLeapYear(year.toInt())}"
 }
 
-class emptyFormatter(releaseDate: String) : ReleaseDateFormatter(releaseDate) {
+class EmptyFormatter(releaseDate: String) : ReleaseDateFormatter(releaseDate) {
     override fun formatDate() = ""
 }

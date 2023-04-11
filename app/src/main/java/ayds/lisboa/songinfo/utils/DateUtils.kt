@@ -20,7 +20,7 @@ object DateUtils {
         }
 
     fun isLeapYear(year: Int) =
-        if(year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))
+        if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))
             "(leap year)"
         else
             "(not a leap year)"
