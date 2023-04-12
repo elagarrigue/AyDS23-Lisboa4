@@ -23,7 +23,7 @@ internal class SongDescriptionHelperImpl : SongDescriptionHelper {
         }\n" +
                 "Artist: ${song.artistName}\n" +
                 "Album: ${song.albumName}\n" +
-                "Release date: ${ReleaseDateFactory.get(song).formatDate()}"
+                "Release date: ${ReleaseDateFactoryImpl.get(song).formatDate()}"//separarfuncion
     }
 
 }

@@ -24,5 +24,4 @@ object DateUtils {
             "(leap year)"
         else
             "(not a leap year)"
-
 }
