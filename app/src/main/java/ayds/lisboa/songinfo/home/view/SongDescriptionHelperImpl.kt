@@ -8,10 +8,8 @@ interface SongDescriptionHelper {
     fun getSongDescriptionText(song: Song = EmptySong): String
 }
 
-internal class SongDescriptionHelperImpl(private val releaseDateFactory: ReleaseDateFactory) :
-    SongDescriptionHelper {
+internal class SongDescriptionHelperImpl(private val releaseDateFactory: ReleaseDateFactory): SongDescriptionHelper {
 
-    //private lateinit var releaseDateFactory: ReleaseDateFactory
     override fun getSongDescriptionText(song: Song): String {
         return when (song) {
             is SpotifySong -> buildSpotifySongDescription(song)
@@ -26,7 +24,8 @@ internal class SongDescriptionHelperImpl(private val releaseDateFactory: Release
         }\n" +
                 "Artist: ${song.artistName}\n" +
                 "Album: ${song.albumName}\n" +
-                "Release date: ${releaseDateFactory.get(song).formatDate()}"//separarfuncion
+                "Release date: ${createReleaseDate(song)}"
     }
 
+    private fun createReleaseDate(song: SpotifySong) = releaseDateFactory.get(song).formatDate()
 }

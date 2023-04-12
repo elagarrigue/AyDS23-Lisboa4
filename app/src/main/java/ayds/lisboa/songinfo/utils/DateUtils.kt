@@ -2,7 +2,7 @@ package ayds.lisboa.songinfo.utils
 
 object DateUtils {
 
-    fun numberToMonthName(month: Int?) =
+    fun numberToMonthName(month: Int) =
         when (month) {
             1 -> "January"
             2 -> "February"
