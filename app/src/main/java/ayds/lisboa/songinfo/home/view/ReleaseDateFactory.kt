@@ -9,11 +9,15 @@ interface ReleaseDateFactory {
 }
 
 internal object ReleaseDateFactoryImpl : ReleaseDateFactory {
+
+    private const val RELEASE_DATE_PRECISION_YEAR = "year"
+    private const val RELEASE_DATE_PRECISION_MONTH = "month"
+    private const val RELEASE_DATE_PRECISION_DAY = "day"
     override fun get(song: SpotifySong) =
         when (song.releaseDatePrecision) {
-            "year" -> YearFormatter(song.releaseDate)
-            "month" -> MonthFormatter(song.releaseDate)
-            "day" -> DayFormatter(song.releaseDate)
+            RELEASE_DATE_PRECISION_YEAR -> YearFormatter(song.releaseDate)
+            RELEASE_DATE_PRECISION_MONTH -> MonthFormatter(song.releaseDate)
+            RELEASE_DATE_PRECISION_DAY -> DayFormatter(song.releaseDate)
             else -> DefaultFormatter(song.releaseDate)
         }
 }
