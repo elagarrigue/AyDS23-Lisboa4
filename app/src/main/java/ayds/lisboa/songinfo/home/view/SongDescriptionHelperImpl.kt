@@ -24,8 +24,8 @@ internal class SongDescriptionHelperImpl(private val releaseDateFactory: Release
         }\n" +
                 "Artist: ${song.artistName}\n" +
                 "Album: ${song.albumName}\n" +
-                "Release date: ${createReleaseDate(song)}"
+                "Release date: ${song.createReleaseDate()}"
     }
 
-    private fun createReleaseDate(song: SpotifySong) = releaseDateFactory.get(song).formatDate()
+    private fun SpotifySong.createReleaseDate() = releaseDateFactory.get(this).formatDate()
 }
