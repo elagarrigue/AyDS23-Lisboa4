@@ -33,13 +33,15 @@ class OtherInfoWindow : AppCompatActivity() {
         getArtistInfo()
     }
 
-    private fun setContentView(){
+    private fun setContentView() {
         setContentView(R.layout.activity_other_info)
     }
-    private fun initTextView(){
+
+    private fun initTextView() {
         textPane = findViewById(R.id.textPane)
     }
-    private fun initDatabase(){
+
+    private fun initDatabase() {
         dataBase = DataBase(this)
     }
 
@@ -61,12 +63,12 @@ class OtherInfoWindow : AppCompatActivity() {
             .build()
     }
 
-    private fun createLastFMAPI(){
+    private fun createLastFMAPI() {
         lastFMAPI = retrofit.create(LastFMAPI::class.java)
     }
 
-    private fun createThread(){
-        Thread{
+    private fun createThread() {
+        Thread {
             obtainArtistInfo()
             updateView()
         }.start()
@@ -103,21 +105,6 @@ class OtherInfoWindow : AppCompatActivity() {
         val url = artist["url"]
         artistUrl = url.asString
     }
-    private fun setUrlButton(){
-        findViewById<View>(R.id.openUrlButton).setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(artistUrl)
-            startActivity(intent)
-        }
-    }
-
-    private fun updateView(){
-        val imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
-        runOnUiThread {
-            Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
-            textPane.text = Html.fromHtml(artistInfo)
-        }
-    }
 
     private fun textToHtml(text: String, term: String?): String {
         val builder = StringBuilder()
@@ -135,8 +122,25 @@ class OtherInfoWindow : AppCompatActivity() {
         return builder.toString()
     }
 
-    private fun saveArtistInfoInDataBase(){
+    private fun saveArtistInfoInDataBase() {
         DataBase.saveArtist(dataBase, artistName, artistInfo)
+    }
+
+    private fun setUrlButton() {
+        findViewById<View>(R.id.openUrlButton).setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(artistUrl)
+            startActivity(intent)
+        }
+    }
+
+    private fun updateView() {
+        val imageUrl =
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
+        runOnUiThread {
+            Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
+            textPane.text = Html.fromHtml(artistInfo)
+        }
     }
 
     companion object {
