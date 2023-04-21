@@ -20,31 +20,37 @@ import java.io.IOException
 import java.util.*
 
 class OtherInfoWindow : AppCompatActivity() {
-    private var textPane2: TextView? = null
+    private lateinit var textPane: TextView
+    private lateinit var dataBase: DataBase
 
-    //private JPanel imagePanel;
-    // private JLabel posterImageLabel;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_other_info)
-        textPane2 = findViewById(R.id.textPane2)
-        open(intent.getStringExtra("artistName"))
+        setContentView()
+        initTextView()
+        initDatabase()
+        getArtistInfo()
     }
 
-    fun getARtistInfo(artistName: String?) {
+    private fun setContentView(){
+        setContentView(R.layout.activity_other_info)
+    }
+    private fun initTextView(){
+        textPane = findViewById(R.id.textPane)
+    }
+    private fun initDatabase(){
+        dataBase = DataBase(this)
+    }
 
-        // create
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://ws.audioscrobbler.com/2.0/")
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build()
+    private fun getArtistInfo() {
+        var artistName = getArtistName()
+        val retrofit = newRetrofit()
         val lastFMAPI = retrofit.create(LastFMAPI::class.java)
         Log.e("TAG", "artistName $artistName")
         Thread {
             var text = DataBase.getInfo(dataBase, artistName)
-            if (text != null) { // exists in db
+            if (text != null) {
                 text = "[*]$text"
-            } else { // get from service
+            } else {
                 val callResponse: Response<String>
                 try {
                     callResponse = lastFMAPI.getArtistInfo(artistName).execute()
@@ -61,8 +67,6 @@ class OtherInfoWindow : AppCompatActivity() {
                         text = extract.asString.replace("\\n", "\n")
                         text = textToHtml(text, artistName)
 
-
-                        // save to DB  <o/
                         DataBase.saveArtist(dataBase, artistName, text)
                     }
                     val urlString = url.asString
@@ -82,18 +86,20 @@ class OtherInfoWindow : AppCompatActivity() {
             val finalText = text
             runOnUiThread {
                 Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
-                textPane2!!.text = Html.fromHtml(finalText)
+                textPane!!.text = Html.fromHtml(finalText)
             }
         }.start()
     }
 
-    private var dataBase: DataBase? = null
-    private fun open(artist: String?) {
-        dataBase = DataBase(this)
-        DataBase.saveArtist(dataBase, "test", "sarasa")
-        Log.e("TAG", "" + DataBase.getInfo(dataBase, "test"))
-        Log.e("TAG", "" + DataBase.getInfo(dataBase, "nada"))
-        getARtistInfo(artist)
+    private fun getArtistName(): String? {
+        return intent.getStringExtra("artistName")
+    }
+
+    private fun newRetrofit(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://ws.audioscrobbler.com/2.0/")
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .build()
     }
 
     companion object {
