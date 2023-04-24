@@ -14,8 +14,8 @@ private const val ARTIST_COLUMN = "artist"
 private const val INFO_COLUMN = "info"
 private const val SOURCE_COLUMN = "source"
 
-class DataBase(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION)
-{
+class DataBase(context: Context?) :
+    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     private val projection = arrayOf(
         ID_COLUMN,
         ARTIST_COLUMN,
@@ -24,27 +24,24 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
 
     override fun onCreate(db: SQLiteDatabase) {
         val query: String =
-            "CREATE TABLE $ARTISTS_TABLE (" +
-                    "$ID_COLUMN string PRIMARY KEY, " +
+            "create table $ARTISTS_TABLE (" +
+                    "$ID_COLUMN integer PRIMARY KEY AUTOINCREMENT, " +
                     "$ARTIST_COLUMN string, " +
                     "$INFO_COLUMN string, " +
-                    "$SOURCE_COLUMN integer" +
-                    ")"
-
+                    "$SOURCE_COLUMN integer)"
         db.execSQL(query)
     }
 
     fun saveArtist(artist: String, info: String) {
         val values = ContentValues().apply {
-            put("ARTIST_COLUMN", artist)
-            put("INFO_COLUMN", info)
-            put("SOURCE_COLUMN", 1)
+            put(ARTIST_COLUMN, artist)
+            put(INFO_COLUMN, info)
+            put(SOURCE_COLUMN, 1)
         }
         writableDatabase?.insert(ARTISTS_TABLE, null, values)
     }
 
     fun getInfo(artist: String): String? {
-        "$ARTIST_COLUMN DESC"
         val cursor = readableDatabase.query(
             ARTISTS_TABLE,
             projection,
@@ -54,16 +51,22 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
             null,
             "$ARTIST_COLUMN DESC"
         )
-        return cursor.getInfo()
+        return getInfo(cursor)
     }
-    private fun Cursor.getInfo(): String? {
-        return try {
-            getString(getColumnIndexOrThrow(INFO_COLUMN))
-        } catch (e: IllegalArgumentException) {
+
+    private fun getInfo(cursor: Cursor): String? =
+        try {
+            with(cursor) {
+                if (moveToNext()) {
+                    getString(getColumnIndexOrThrow(INFO_COLUMN))
+                } else {
+                    null
+                }
+            }
+        } catch (e: java.sql.SQLException) {
+            e.printStackTrace()
             null
-        } finally {
-            close()
         }
-    }
+
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 }
