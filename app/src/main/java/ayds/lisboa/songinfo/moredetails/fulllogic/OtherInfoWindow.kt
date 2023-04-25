@@ -24,6 +24,7 @@ class OtherInfoWindow : AppCompatActivity() {
     private lateinit var lastFMAPI: LastFMAPI
     private lateinit var artistInfo: String
     private lateinit var artistUrl: String
+    private lateinit var imageUrl: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,10 +84,10 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun getArtistInfoFromDataBase() {
-        artistInfo = DataBase.getInfo(dataBase, artistName) ?: ""
+        artistInfo = dataBase.getInfo(artistName) ?: ""
     }
 
-    private fun getArtistInfoFromLastFMAPI() {
+    private fun getArtistInfoFromLastFMAPI() { //mirar
         val callLastAPIResponse = lastFMAPI.getArtistInfo(artistName).execute()
         val gson = Gson()
         val jobj = gson.fromJson(callLastAPIResponse.body(), JsonObject::class.java)
@@ -102,11 +103,10 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun setArtistUrl(artist: JsonObject) {
-        val url = artist["url"]
-        artistUrl = url.asString
+        artistUrl = artist["url"].asString
     }
 
-    private fun textToHtml(text: String, term: String?): String {
+    private fun textToHtml(text: String, term: String?): String { //mirar
         val builder = StringBuilder()
         builder.append("<html><div width=400>")
         builder.append("<font face=\"arial\">")
@@ -123,10 +123,10 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun saveArtistInfoInDataBase() {
-        DataBase.saveArtist(dataBase, artistName, artistInfo)
+        dataBase.saveArtist(artistName, artistInfo)
     }
 
-    private fun setUrlButton() {
+    private fun setUrlButton() { //mirar
         findViewById<View>(R.id.openUrlButton).setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(artistUrl)
@@ -135,12 +135,23 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun updateView() {
-        val imageUrl =
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
+        setImageUrl()
+        runUiThread()
+    }
+    private fun setImageUrl(){
+        imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
+    }
+    private fun runUiThread(){
         runOnUiThread {
-            Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
-            textPane.text = Html.fromHtml(artistInfo)
+            loadLastFMLogo()
+            loadArtistInfo()
         }
+    }
+    private fun loadLastFMLogo(){
+        Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
+    }
+    private fun loadArtistInfo(){
+        textPane.text = Html.fromHtml(artistInfo)
     }
 
     companion object {
