@@ -10,20 +10,20 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ayds.lisboa.songinfo.R
 import com.google.gson.Gson
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.squareup.picasso.Picasso
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.*
 
+private const val URL_BASE_API = "https://ws.audioscrobbler.com/2.0/"
 class OtherInfoWindow : AppCompatActivity() {
-    private lateinit var textPane: TextView
+    private lateinit var artistInfoTextView: TextView
     private lateinit var dataBase: DataBase
     private lateinit var artistName: String
     private lateinit var retrofit: Retrofit
     private lateinit var lastFMAPI: LastFMAPI
-    private lateinit var artistInfo: String
-    private lateinit var artistUrl: String
     private lateinit var imageUrl: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +39,7 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun initTextView() {
-        textPane = findViewById(R.id.textPane)
+        artistInfoTextView = findViewById(R.id.artistInfoTextView)
     }
 
     private fun initDatabase() {
@@ -50,7 +50,7 @@ class OtherInfoWindow : AppCompatActivity() {
         getArtistName()
         createRetrofit()
         createLastFMAPI()
-        createThread()
+        searchArtistInfo()
     }
 
     private fun getArtistName() {
@@ -59,7 +59,7 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun createRetrofit() {
         retrofit = Retrofit.Builder()
-            .baseUrl("https://ws.audioscrobbler.com/2.0/")
+            .baseUrl(URL_BASE_API)
             .addConverterFactory(ScalarsConverterFactory.create())
             .build()
     }
@@ -68,45 +68,61 @@ class OtherInfoWindow : AppCompatActivity() {
         lastFMAPI = retrofit.create(LastFMAPI::class.java)
     }
 
-    private fun createThread() {
+    private fun searchArtistInfo() {
         Thread {
-            obtainArtistInfo()
-            updateView()
+            updateArtistInfo()
         }.start()
     }
 
-    private fun obtainArtistInfo() {
-        getArtistInfoFromDataBase()
+    private fun updateArtistInfo() {
+        val artistInfo = obtainArtistInfo()
+        updateView(artistInfo)
+    }
+
+    private fun obtainArtistInfo(): String {
+        var artistInfo = getArtistInfoFromDataBase()
         if (artistInfo.isEmpty()) {
-            getArtistInfoFromLastFMAPI()
-            setUrlButton()
+            val artist = getArtistFromLastFMAPI()
+            artistInfo = getArtistInfoFromLastFMAPI(artist)
+            val artistUrl = getArtistUrl(artist)
+            setUrlButton(artistUrl)
+            if(artistInfo.isNotEmpty())
+                saveArtistInfoInDataBase(artistInfo)
+        } else {
+            artistInfo = "[*]$artistInfo"
         }
+        return artistInfo
     }
 
-    private fun getArtistInfoFromDataBase() {
-        artistInfo = dataBase.getInfo(artistName) ?: ""
+    private fun getArtistUrl(artist: JsonObject): String {
+        return artist["url"].asString
+    }
+    private fun getArtistInfoFromDataBase(): String {
+        return dataBase.getArtistInfo(artistName) ?: ""
     }
 
-    private fun getArtistInfoFromLastFMAPI() { //mirar
+    private fun getArtistInfoFromLastFMAPI(artist: JsonObject): String {
+        val bioContent = getBioContent(artist)
+        return  if (bioContent != null) {
+                    var artistInfo = bioContent.asString.replace("\\n", "\n")
+                    textToHtml(artistInfo, artistName)
+                } else
+                    ""
+    }
+
+    private fun getArtistFromLastFMAPI(): JsonObject {
         val callLastAPIResponse = lastFMAPI.getArtistInfo(artistName).execute()
         val gson = Gson()
         val jobj = gson.fromJson(callLastAPIResponse.body(), JsonObject::class.java)
-        val artist = jobj["artist"].asJsonObject
+        return jobj["artist"].asJsonObject
+    }
+
+    private  fun getBioContent(artist: JsonObject): JsonElement{
         val bio = artist["bio"].asJsonObject
-        val bioContent = bio["content"]
-        setArtistUrl(artist)
-        if (bioContent != null) {
-            artistInfo = bioContent.asString.replace("\\n", "\n")
-            artistInfo = textToHtml(artistInfo, artistName)
-            saveArtistInfoInDataBase()
-        }
+        return bio["content"]
     }
 
-    private fun setArtistUrl(artist: JsonObject) {
-        artistUrl = artist["url"].asString
-    }
-
-    private fun textToHtml(text: String, term: String?): String { //mirar
+    private fun textToHtml(text: String, term: String?): String {
         val builder = StringBuilder()
         builder.append("<html><div width=400>")
         builder.append("<font face=\"arial\">")
@@ -122,11 +138,11 @@ class OtherInfoWindow : AppCompatActivity() {
         return builder.toString()
     }
 
-    private fun saveArtistInfoInDataBase() {
+    private fun saveArtistInfoInDataBase(artistInfo: String) {
         dataBase.saveArtist(artistName, artistInfo)
     }
 
-    private fun setUrlButton() { //mirar
+    private fun setUrlButton(artistUrl: String) {
         findViewById<View>(R.id.openUrlButton).setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(artistUrl)
@@ -134,24 +150,24 @@ class OtherInfoWindow : AppCompatActivity() {
         }
     }
 
-    private fun updateView() {
+    private fun updateView(artistInfo: String) {
         setImageUrl()
-        runUiThread()
+        runUiThread(artistInfo)
     }
     private fun setImageUrl(){
         imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
     }
-    private fun runUiThread(){
+    private fun runUiThread(artistInfo: String){
         runOnUiThread {
             loadLastFMLogo()
-            loadArtistInfo()
+            loadArtistInfo(artistInfo)
         }
     }
     private fun loadLastFMLogo(){
         Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
     }
-    private fun loadArtistInfo(){
-        textPane.text = Html.fromHtml(artistInfo)
+    private fun loadArtistInfo(artistInfo: String){
+        artistInfoTextView.text = Html.fromHtml(artistInfo)
     }
 
     companion object {
