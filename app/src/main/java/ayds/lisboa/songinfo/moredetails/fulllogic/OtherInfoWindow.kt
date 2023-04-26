@@ -18,13 +18,13 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.*
 
 private const val URL_BASE_API = "https://ws.audioscrobbler.com/2.0/"
+private const val URL_LAST_FM_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
 class OtherInfoWindow : AppCompatActivity() {
     private lateinit var artistInfoTextView: TextView
     private lateinit var dataBase: DataBase
     private lateinit var artistName: String
     private lateinit var retrofit: Retrofit
     private lateinit var lastFMAPI: LastFMAPI
-    private lateinit var imageUrl: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -151,20 +151,14 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun updateView(artistInfo: String) {
-        setImageUrl()
-        runUiThread(artistInfo)
-    }
-    private fun setImageUrl(){
-        imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
-    }
-    private fun runUiThread(artistInfo: String){
         runOnUiThread {
             loadLastFMLogo()
             loadArtistInfo(artistInfo)
         }
     }
+    
     private fun loadLastFMLogo(){
-        Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
+        Picasso.get().load(URL_LAST_FM_IMAGE).into(findViewById<View>(R.id.imageView) as ImageView)
     }
     private fun loadArtistInfo(artistInfo: String){
         artistInfoTextView.text = Html.fromHtml(artistInfo)
