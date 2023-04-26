@@ -75,22 +75,22 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun updateArtistInfo() {
-        val artistInfo = obtainArtistInfo()
+        var artistInfo = getArtistInfoFromDataBase()
+        if(!artistInfo.isEmpty()){
+            artistInfo = "[*]$artistInfo"
+        } else {
+            artistInfo = getArtistInfoFromLastFMAPI()
+            if(artistInfo.isNotEmpty())
+                saveArtistInfoInDataBase(artistInfo)
+        }
         updateView(artistInfo)
     }
 
-    private fun obtainArtistInfo(): String {
-        var artistInfo = getArtistInfoFromDataBase()
-        if (artistInfo.isEmpty()) {
-            val artist = getArtistFromLastFMAPI()
-            artistInfo = getArtistInfoFromLastFMAPI(artist)
-            val artistUrl = getArtistUrl(artist)
-            setUrlButton(artistUrl)
-            if(artistInfo.isNotEmpty())
-                saveArtistInfoInDataBase(artistInfo)
-        } else {
-            artistInfo = "[*]$artistInfo"
-        }
+    private fun getArtistInfoFromLastFMAPI(): String {
+        val artist = getArtistFromLastFMAPI()
+        val artistInfo = getArtistInfoFromJsonResponse(artist)
+        val artistUrl = getArtistUrl(artist)
+        setUrlButton(artistUrl)
         return artistInfo
     }
 
@@ -101,7 +101,7 @@ class OtherInfoWindow : AppCompatActivity() {
         return dataBase.getArtistInfo(artistName) ?: ""
     }
 
-    private fun getArtistInfoFromLastFMAPI(artist: JsonObject): String {
+    private fun getArtistInfoFromJsonResponse(artist: JsonObject): String {
         val bioContent = getBioContent(artist)
         return  if (bioContent != null) {
                     var artistInfo = bioContent.asString.replace("\\n", "\n")
