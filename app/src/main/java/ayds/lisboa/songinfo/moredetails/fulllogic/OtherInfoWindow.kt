@@ -31,7 +31,7 @@ class OtherInfoWindow : AppCompatActivity() {
         setContentView()
         initTextView()
         initDatabase()
-        getArtistInfo()
+        updateArtistInfoView()
     }
 
     private fun setContentView() {
@@ -46,14 +46,14 @@ class OtherInfoWindow : AppCompatActivity() {
         dataBase = DataBase(this)
     }
 
-    private fun getArtistInfo() {
-        getArtistName()
+    private fun updateArtistInfoView() {
+        updateArtistName()
         createRetrofit()
         createLastFMAPI()
         searchArtistInfo()
     }
 
-    private fun getArtistName() {
+    private fun updateArtistName() {
         artistName = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
     }
 
@@ -75,23 +75,25 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun updateArtistInfo() {
+        val artistInfo = getArtistInfo()
+        updateUrlButton()
+        updateViewInfo(artistInfo)
+    }
+
+    private fun getArtistInfo(): String {
         var artistInfo = getArtistInfoFromDataBase()
-        if(!artistInfo.isEmpty()){
+        if(artistInfo.isNotEmpty()){
             artistInfo = "[*]$artistInfo"
         } else {
             artistInfo = getArtistInfoFromLastFMAPI()
             if(artistInfo.isNotEmpty())
                 saveArtistInfoInDataBase(artistInfo)
         }
-        updateView(artistInfo)
+        return artistInfo
     }
-
     private fun getArtistInfoFromLastFMAPI(): String {
         val artist = getArtistFromLastFMAPI()
-        val artistInfo = getArtistInfoFromJsonResponse(artist)
-        val artistUrl = getArtistUrl(artist)
-        setUrlButton(artistUrl)
-        return artistInfo
+        return getArtistInfoFromJsonResponse(artist)
     }
 
     private fun getArtistUrl(artist: JsonObject): String {
@@ -104,7 +106,7 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun getArtistInfoFromJsonResponse(artist: JsonObject): String {
         val bioContent = getBioContent(artist)
         return  if (bioContent != null) {
-                    var artistInfo = bioContent.asString.replace("\\n", "\n")
+                    val artistInfo = bioContent.asString.replace("\\n", "\n")
                     textToHtml(artistInfo, artistName)
                 } else
                     ""
@@ -117,7 +119,7 @@ class OtherInfoWindow : AppCompatActivity() {
         return jobj["artist"].asJsonObject
     }
 
-    private  fun getBioContent(artist: JsonObject): JsonElement{
+    private  fun getBioContent(artist: JsonObject): JsonElement?{
         val bio = artist["bio"].asJsonObject
         return bio["content"]
     }
@@ -149,14 +151,19 @@ class OtherInfoWindow : AppCompatActivity() {
             startActivity(intent)
         }
     }
+    private fun updateUrlButton(){
+        val artist = getArtistFromLastFMAPI()
+        val artistUrl = getArtistUrl(artist)
+        setUrlButton(artistUrl)
+    }
 
-    private fun updateView(artistInfo: String) {
+    private fun updateViewInfo(artistInfo: String){
         runOnUiThread {
             loadLastFMLogo()
             loadArtistInfo(artistInfo)
         }
     }
-    
+
     private fun loadLastFMLogo(){
         Picasso.get().load(URL_LAST_FM_IMAGE).into(findViewById<View>(R.id.imageView) as ImageView)
     }
