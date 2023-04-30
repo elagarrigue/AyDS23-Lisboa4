@@ -19,18 +19,45 @@ import java.util.*
 
 private const val URL_BASE_API = "https://ws.audioscrobbler.com/2.0/"
 private const val URL_LAST_FM_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
+private const val JSON_ARTIST = "artist"
+private const val JSON_BIO = "bio"
+private const val JSON_CONTENT = "content"
+private const val JSON_URL = "url"
+private const val PREFIX = "[*]"
+private const val NEW_LINE = "\n"
+private const val ESCAPED_NEW_LINE = "\\n"
+private const val DEFAULT_STRING = ""
+private const val SIMPLE_QUOTE = "'"
+private const val FLAG_INSENSITIVE_UPPER_LOWER_CASE = "(?i)"
+private const val HTML_HTML_OPEN = "<html>"
+private const val HTML_HTML_CLOSE = "</html>"
+private const val HTML_FONT_FACE_ARIAL_OPEN = "<font face=\"arial\">"
+private const val HTML_FONT_CLOSE = "</font>"
+private const val HTML_DIV_W400_OPEN = "<div width=400>"
+private const val HTML_DIV_CLOSE = "</div>"
+private const val HTML_B_OPEN = "<b>"
+private const val HTML_B_CLOSE = "</b>"
+private const val HTML_BR = "<br>"
+private const val HTML_SPACE = " "
+
 class OtherInfoWindow : AppCompatActivity() {
     private lateinit var artistInfoTextView: TextView
     private lateinit var dataBase: DataBase
     private lateinit var artistName: String
     private lateinit var retrofit: Retrofit
     private lateinit var lastFMAPI: LastFMAPI
+    private lateinit var openUrlButtonView: View
+    private lateinit var lastFmImageView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView()
+        initLastFmImageView()
         initTextView()
+        initOpenUrlButtonView()
         initDatabase()
+        createRetrofit()
+        createLastFMAPI()
         updateArtistInfoView()
     }
 
@@ -42,14 +69,20 @@ class OtherInfoWindow : AppCompatActivity() {
         artistInfoTextView = findViewById(R.id.artistInfoTextView)
     }
 
+    private fun initOpenUrlButtonView(){
+        openUrlButtonView = findViewById(R.id.openUrlButton)
+    }
+
+    private fun initLastFmImageView() {
+        lastFmImageView = findViewById(R.id.imageView)
+    }
+
     private fun initDatabase() {
         dataBase = DataBase(this)
     }
 
     private fun updateArtistInfoView() {
         updateArtistName()
-        createRetrofit()
-        createLastFMAPI()
         searchArtistInfo()
     }
 
@@ -75,68 +108,76 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun updateArtistInfo() {
-        val artistInfo = getArtistInfo()
-        updateUrlButton()
-        updateViewInfo(artistInfo)
+        val biography = getArtistBiography()
+        if(!biography.isInDataBase){
+            setUrlButton(biography.url)
+        }
+        updateViewInfo(biography.artistInfo)
     }
 
-    private fun getArtistInfo(): String {
+    private fun getArtistBiography(): Biography {
         var artistInfo = getArtistInfoFromDataBase()
+        var artistBiography = Biography(artistInfo, DEFAULT_STRING, true)
         if(artistInfo.isNotEmpty()){
-            artistInfo = "[*]$artistInfo"
+            artistBiography.artistInfo = "$PREFIX$artistInfo"
         } else {
-            artistInfo = getArtistInfoFromLastFMAPI()
+            artistBiography = getArtistBiographyFromLastFMAPI()
+            artistInfo = artistBiography.artistInfo
             if(artistInfo.isNotEmpty())
                 saveArtistInfoInDataBase(artistInfo)
         }
-        return artistInfo
+        return artistBiography
     }
-    private fun getArtistInfoFromLastFMAPI(): String {
+
+    private fun getArtistBiographyFromLastFMAPI(): Biography {
         val artist = getArtistFromLastFMAPI()
-        return getArtistInfoFromJsonResponse(artist)
+        val artistInfo = getArtistInfoFromJsonResponse(artist)
+        val artistUrl = getArtistUrl(artist)
+        return Biography(artistInfo, artistUrl, false)
     }
 
     private fun getArtistUrl(artist: JsonObject): String {
-        return artist["url"].asString
+        return artist[JSON_URL].asString
     }
+
     private fun getArtistInfoFromDataBase(): String {
-        return dataBase.getArtistInfo(artistName) ?: ""
+        return dataBase.getArtistInfo(artistName) ?: DEFAULT_STRING
     }
 
     private fun getArtistInfoFromJsonResponse(artist: JsonObject): String {
         val bioContent = getBioContent(artist)
         return  if (bioContent != null) {
-                    val artistInfo = bioContent.asString.replace("\\n", "\n")
+                    val artistInfo = bioContent.asString.replace(ESCAPED_NEW_LINE, NEW_LINE)
                     textToHtml(artistInfo, artistName)
                 } else
-                    ""
+                    DEFAULT_STRING
     }
 
     private fun getArtistFromLastFMAPI(): JsonObject {
         val callLastAPIResponse = lastFMAPI.getArtistInfo(artistName).execute()
         val gson = Gson()
         val jobj = gson.fromJson(callLastAPIResponse.body(), JsonObject::class.java)
-        return jobj["artist"].asJsonObject
+        return jobj[JSON_ARTIST].asJsonObject
     }
 
     private  fun getBioContent(artist: JsonObject): JsonElement?{
-        val bio = artist["bio"].asJsonObject
-        return bio["content"]
+        val bio = artist[JSON_BIO].asJsonObject
+        return bio[JSON_CONTENT]
     }
 
     private fun textToHtml(text: String, term: String?): String {
         val builder = StringBuilder()
-        builder.append("<html><div width=400>")
-        builder.append("<font face=\"arial\">")
+        builder.append("$HTML_HTML_OPEN$HTML_DIV_W400_OPEN")
+        builder.append(HTML_FONT_FACE_ARIAL_OPEN)
         val textWithBold = text
-            .replace("'", " ")
-            .replace("\n", "<br>")
+            .replace(SIMPLE_QUOTE, HTML_SPACE)
+            .replace(NEW_LINE, HTML_BR)
             .replace(
-                "(?i)$term".toRegex(),
-                "<b>" + term!!.uppercase(Locale.getDefault()) + "</b>"
+                "$FLAG_INSENSITIVE_UPPER_LOWER_CASE$term".toRegex(),
+                HTML_B_OPEN + term!!.uppercase(Locale.getDefault()) + HTML_B_CLOSE
             )
         builder.append(textWithBold)
-        builder.append("</font></div></html>")
+        builder.append("$HTML_FONT_CLOSE$HTML_DIV_CLOSE$HTML_HTML_CLOSE")
         return builder.toString()
     }
 
@@ -145,16 +186,15 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun setUrlButton(artistUrl: String) {
-        findViewById<View>(R.id.openUrlButton).setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(artistUrl)
-            startActivity(intent)
+        openUrlButtonView.setOnClickListener {
+            startActivityOnClick(artistUrl)
         }
     }
-    private fun updateUrlButton(){
-        val artist = getArtistFromLastFMAPI()
-        val artistUrl = getArtistUrl(artist)
-        setUrlButton(artistUrl)
+
+    private fun startActivityOnClick(artistUrl: String){
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(artistUrl)
+        startActivity(intent)
     }
 
     private fun updateViewInfo(artistInfo: String){
@@ -165,8 +205,9 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun loadLastFMLogo(){
-        Picasso.get().load(URL_LAST_FM_IMAGE).into(findViewById<View>(R.id.imageView) as ImageView)
+        Picasso.get().load(URL_LAST_FM_IMAGE).into(lastFmImageView)
     }
+
     private fun loadArtistInfo(artistInfo: String){
         artistInfoTextView.text = Html.fromHtml(artistInfo)
     }
@@ -174,5 +215,10 @@ class OtherInfoWindow : AppCompatActivity() {
     companion object {
         const val ARTIST_NAME_EXTRA = "artistName"
     }
+}
 
+private class Biography(
+    var artistInfo: String,
+    var url: String,
+    var isInDataBase: Boolean){
 }

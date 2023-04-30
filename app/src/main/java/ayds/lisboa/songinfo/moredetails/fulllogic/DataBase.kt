@@ -14,8 +14,10 @@ private const val ARTIST_COLUMN = "artist"
 private const val INFO_COLUMN = "info"
 private const val SOURCE_COLUMN = "source"
 
-class DataBase(context: Context?) :
-    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+class DataBase(
+    context: Context?
+) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+
     private val projection = arrayOf(
         ID_COLUMN,
         ARTIST_COLUMN,
