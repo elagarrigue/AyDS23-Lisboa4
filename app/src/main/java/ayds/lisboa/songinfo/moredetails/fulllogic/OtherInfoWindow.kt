@@ -52,13 +52,17 @@ class OtherInfoWindow : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView()
-        initLastFmImageView()
-        initTextView()
-        initOpenUrlButtonView()
+        initViews()
         initDatabase()
         createRetrofit()
         createLastFMAPI()
         updateArtistInfoView()
+    }
+
+    private fun initViews() {
+        initLastFmImageView()
+        initTextView()
+        initOpenUrlButtonView()
     }
 
     private fun setContentView() {
@@ -109,22 +113,20 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun updateArtistInfo() {
         val biography = getArtistBiography()
-        if(!biography.isInDataBase){
+        if(biography.isInDataBase){
+            biography.artistInfo = "$PREFIX${biography.artistInfo}"
+        }else{
             setUrlButton(biography.url)
         }
         updateViewInfo(biography.artistInfo)
     }
 
     private fun getArtistBiography(): Biography {
-        var artistInfo = getArtistInfoFromDataBase()
-        var artistBiography = Biography(artistInfo, DEFAULT_STRING, true)
-        if(artistInfo.isNotEmpty()){
-            artistBiography.artistInfo = "$PREFIX$artistInfo"
-        } else {
+        var artistBiography = Biography(getArtistInfoFromDataBase(), DEFAULT_STRING, true)
+        if(artistBiography.artistInfo.isEmpty()){
             artistBiography = getArtistBiographyFromLastFMAPI()
-            artistInfo = artistBiography.artistInfo
-            if(artistInfo.isNotEmpty())
-                saveArtistInfoInDataBase(artistInfo)
+            if(artistBiography.artistInfo.isNotEmpty())
+                saveArtistInfoInDataBase(artistBiography.artistInfo)
         }
         return artistBiography
     }
