@@ -60,25 +60,13 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun initViews() {
-        initLastFmImageView()
-        initTextView()
-        initOpenUrlButtonView()
+        lastFmImageView = findViewById(R.id.imageView)
+        artistInfoTextView = findViewById(R.id.artistInfoTextView)
+        openUrlButtonView = findViewById(R.id.openUrlButton)
     }
 
     private fun setContentView() {
         setContentView(R.layout.activity_other_info)
-    }
-
-    private fun initTextView() {
-        artistInfoTextView = findViewById(R.id.artistInfoTextView)
-    }
-
-    private fun initOpenUrlButtonView(){
-        openUrlButtonView = findViewById(R.id.openUrlButton)
-    }
-
-    private fun initLastFmImageView() {
-        lastFmImageView = findViewById(R.id.imageView)
     }
 
     private fun initDatabase() {
@@ -113,16 +101,16 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun updateArtistInfo() {
         val biography = getArtistBiography()
-        if(biography.isInDataBase){
-            biography.artistInfo = "$PREFIX${biography.artistInfo}"
-        }else{
-            setUrlButton(biography.url)
+        when(biography.isLocallyStored) {
+            false -> setUrlButton(biography.url)
+            else -> {}
         }
-        updateViewInfo(biography.artistInfo)
+        updateViewInfo(biography)
     }
 
     private fun getArtistBiography(): Biography {
-        var artistBiography = Biography(getArtistInfoFromDataBase(), DEFAULT_STRING, true)
+        val artistInfo = getArtistInfoFromDataBase()
+        var artistBiography = Biography(artistInfo, DEFAULT_STRING, true)
         if(artistBiography.artistInfo.isEmpty()){
             artistBiography = getArtistBiographyFromLastFMAPI()
             if(artistBiography.artistInfo.isNotEmpty())
@@ -199,9 +187,13 @@ class OtherInfoWindow : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun updateViewInfo(artistInfo: String){
+    private fun updateViewInfo(artistBiography: Biography){
         runOnUiThread {
             loadLastFMLogo()
+            var artistInfo = artistBiography.artistInfo
+            if(artistBiography.isLocallyStored){
+                artistInfo = "$PREFIX$artistInfo"
+            }
             loadArtistInfo(artistInfo)
         }
     }
@@ -222,5 +214,4 @@ class OtherInfoWindow : AppCompatActivity() {
 private class Biography(
     var artistInfo: String,
     var url: String,
-    var isInDataBase: Boolean){
-}
+    var isLocallyStored: Boolean)
