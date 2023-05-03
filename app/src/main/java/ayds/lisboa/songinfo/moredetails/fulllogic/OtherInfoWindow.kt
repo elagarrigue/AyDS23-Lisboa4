@@ -110,12 +110,15 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun getArtistBiography(): Biography {
         val artistInfo = getArtistInfoFromDataBase()
-        var artistBiography = Biography(artistInfo, DEFAULT_STRING, true)
-        if(artistBiography.artistInfo.isEmpty()){
-            artistBiography = getArtistBiographyFromLastFMAPI()
-            if(artistBiography.artistInfo.isNotEmpty())
-                saveArtistInfoInDataBase(artistBiography.artistInfo)
-        }
+        val artistBiography =
+            if(artistInfo.isEmpty()){
+                getArtistBiographyFromLastFMAPI().apply {
+                    if(this.artistInfo.isNotEmpty())
+                        saveArtistInfoInDataBase(this.artistInfo)
+                }
+            } else {
+                Biography(artistInfo, DEFAULT_STRING, true)
+            }
         return artistBiography
     }
 
@@ -190,11 +193,10 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun updateViewInfo(artistBiography: Biography){
         runOnUiThread {
             loadLastFMLogo()
-            var artistInfo = artistBiography.artistInfo
             if(artistBiography.isLocallyStored){
-                artistInfo = "$PREFIX$artistInfo"
+                artistBiography.artistInfo = "$PREFIX${artistBiography.artistInfo}"
             }
-            loadArtistInfo(artistInfo)
+            loadArtistInfo(artistBiography.artistInfo)
         }
     }
 
