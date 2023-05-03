@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic
+package ayds.lisboa.songinfo.moredetails.fulllogic.model.repository.local.sqldb
 
 import android.content.ContentValues
 import android.content.Context
@@ -6,13 +6,6 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-private const val DATABASE_NAME = "dictionary.db"
-private const val DATABASE_VERSION = 1
-private const val ARTISTS_TABLE = "artists"
-private const val ID_COLUMN = "id"
-private const val ARTIST_COLUMN = "artist"
-private const val INFO_COLUMN = "info"
-private const val SOURCE_COLUMN = "source"
 
 class DataBase(
     context: Context?
@@ -25,12 +18,7 @@ class DataBase(
     )
 
     override fun onCreate(db: SQLiteDatabase) {
-        val query: String =
-            "create table $ARTISTS_TABLE (" +
-                    "$ID_COLUMN integer PRIMARY KEY AUTOINCREMENT, " +
-                    "$ARTIST_COLUMN string, " +
-                    "$INFO_COLUMN string, " +
-                    "$SOURCE_COLUMN integer)"
+
         db.execSQL(query)
     }
 

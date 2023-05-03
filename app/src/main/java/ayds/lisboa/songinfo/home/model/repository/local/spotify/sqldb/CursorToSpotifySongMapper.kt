@@ -5,12 +5,10 @@ import ayds.lisboa.songinfo.home.model.entities.Song.SpotifySong
 import java.sql.SQLException
 
 interface CursorToSpotifySongMapper {
-
     fun map(cursor: Cursor): SpotifySong?
 }
 
 internal class CursorToSpotifySongMapperImpl : CursorToSpotifySongMapper {
-
     override fun map(cursor: Cursor): SpotifySong? =
         try {
             with(cursor) {
