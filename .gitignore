@@ -10,4 +10,6 @@
 /captures
 .externalNativeBuild
 .cxx
+.floo
+.flooignore
 local.properties
