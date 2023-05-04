@@ -193,15 +193,22 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun updateViewInfo(artistBiography: Biography){
         runOnUiThread {
             loadLastFMLogo()
-            if(artistBiography.isLocallyStored){
-                artistBiography.artistInfo = "$PREFIX${artistBiography.artistInfo}"
-            }
-            loadArtistInfo(artistBiography.artistInfo)
+            val formattedArtistInfo = getFormattedArtistInfo(artistBiography)
+            loadArtistInfo(formattedArtistInfo)
         }
     }
 
     private fun loadLastFMLogo(){
         Picasso.get().load(URL_LAST_FM_IMAGE).into(lastFmImageView)
+    }
+
+    private fun getFormattedArtistInfo(artistBiography: Biography): String {
+        val prefix =
+            if(artistBiography.isLocallyStored)
+                PREFIX
+            else
+                DEFAULT_STRING
+        return "$prefix${artistBiography.artistInfo}"
     }
 
     private fun loadArtistInfo(artistInfo: String){
