@@ -1,11 +1,11 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic.model.entities
+package ayds.lisboa.songinfo.moredetails.fulllogic.domain
 
 sealed class Biography {
 
     data class ArtistBiography(
         var artistInfo: String,
         var url: String,
-        var isInDataBase: Boolean
+        var isLocallyStored: Boolean
     ): Biography()
 
     object EmptyBiography: Biography()

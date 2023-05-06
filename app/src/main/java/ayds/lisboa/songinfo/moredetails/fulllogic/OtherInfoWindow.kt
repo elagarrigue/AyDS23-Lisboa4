@@ -26,7 +26,7 @@ private const val JSON_URL = "url"
 private const val PREFIX = "[*]"
 private const val NEW_LINE = "\n"
 private const val ESCAPED_NEW_LINE = "\\n"
-private const val DEFAULT_STRING = ""
+const val DEFAULT_STRING = ""
 private const val SIMPLE_QUOTE = "'"
 private const val FLAG_INSENSITIVE_UPPER_LOWER_CASE = "(?i)"
 private const val HTML_HTML_OPEN = "<html>"
@@ -220,7 +220,7 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 }
 
-private class Biography(
+class Biography(
     var artistInfo: String,
     var url: String,
     var isLocallyStored: Boolean)
