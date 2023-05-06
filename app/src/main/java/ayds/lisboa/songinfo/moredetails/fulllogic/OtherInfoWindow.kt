@@ -9,7 +9,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ayds.lisboa.songinfo.R
-import ayds.lisboa.songinfo.moredetails.fulllogic.model.repository.local.sqldb.DataBase
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -61,25 +60,13 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun initViews() {
-        initLastFmImageView()
-        initTextView()
-        initOpenUrlButtonView()
+        lastFmImageView = findViewById(R.id.imageView)
+        artistInfoTextView = findViewById(R.id.artistInfoTextView)
+        openUrlButtonView = findViewById(R.id.openUrlButton)
     }
 
     private fun setContentView() {
         setContentView(R.layout.activity_other_info)
-    }
-
-    private fun initTextView() {
-        artistInfoTextView = findViewById(R.id.artistInfoTextView)
-    }
-
-    private fun initOpenUrlButtonView(){
-        openUrlButtonView = findViewById(R.id.openUrlButton)
-    }
-
-    private fun initLastFmImageView() {
-        lastFmImageView = findViewById(R.id.imageView)
     }
 
     private fun initDatabase() {
@@ -114,21 +101,24 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun updateArtistInfo() {
         val biography = getArtistBiography()
-        if(biography.isInDataBase){
-            biography.artistInfo = "$PREFIX${biography.artistInfo}"
-        }else{
-            setUrlButton(biography.url)
+        when(biography.isLocallyStored) {
+            false -> setUrlButton(biography.url)
+            else -> {}
         }
-        updateViewInfo(biography.artistInfo)
+        updateViewInfo(biography)
     }
 
     private fun getArtistBiography(): Biography {
-        var artistBiography = Biography(getArtistInfoFromDataBase(), DEFAULT_STRING, true)
-        if(artistBiography.artistInfo.isEmpty()){
-            artistBiography = getArtistBiographyFromLastFMAPI()
-            if(artistBiography.artistInfo.isNotEmpty())
-                saveArtistInfoInDataBase(artistBiography.artistInfo)
-        }
+        val artistInfo = getArtistInfoFromDataBase()
+        val artistBiography =
+            if(artistInfo.isEmpty()){
+                getArtistBiographyFromLastFMAPI().apply {
+                    if(this.artistInfo.isNotEmpty())
+                        saveArtistInfoInDataBase(this.artistInfo)
+                }
+            } else {
+                Biography(artistInfo, DEFAULT_STRING, true)
+            }
         return artistBiography
     }
 
@@ -200,15 +190,25 @@ class OtherInfoWindow : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun updateViewInfo(artistInfo: String){
+    private fun updateViewInfo(artistBiography: Biography){
         runOnUiThread {
             loadLastFMLogo()
-            loadArtistInfo(artistInfo)
+            val formattedArtistInfo = getFormattedArtistInfo(artistBiography)
+            loadArtistInfo(formattedArtistInfo)
         }
     }
 
     private fun loadLastFMLogo(){
         Picasso.get().load(URL_LAST_FM_IMAGE).into(lastFmImageView)
+    }
+
+    private fun getFormattedArtistInfo(artistBiography: Biography): String {
+        val prefix =
+            if(artistBiography.isLocallyStored)
+                PREFIX
+            else
+                DEFAULT_STRING
+        return "$prefix${artistBiography.artistInfo}"
     }
 
     private fun loadArtistInfo(artistInfo: String){
@@ -220,3 +220,7 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 }
 
+private class Biography(
+    var artistInfo: String,
+    var url: String,
+    var isLocallyStored: Boolean)
