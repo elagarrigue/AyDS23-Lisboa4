@@ -1,23 +1,29 @@
 package ayds.lisboa.songinfo.moredetails.fulllogic.data
 
+import ayds.lisboa.songinfo.moredetails.fulllogic.data.external.LastFMService
+import ayds.lisboa.songinfo.moredetails.fulllogic.data.local.sqldb.LastFMLocalStorage
 import ayds.lisboa.songinfo.moredetails.fulllogic.domain.Biography
-import ayds.lisboa.songinfo.moredetails.fulllogic.DEFAULT_STRING
 import ayds.lisboa.songinfo.moredetails.fulllogic.domain.BiographyRepository
+import ayds.lisboa.songinfo.moredetails.fulllogic.domain.Biography.EmptyBiography
 
-class BiographyRepositoryImpl: BiographyRepository {
+class BiographyRepositoryImpl(
+    private val lastFmLocalStorage: LastFMLocalStorage,
+    private val lastFMService: LastFMService
+): BiographyRepository {
 
-    override fun getArtistBiography(): Biography {
-        val artistInfo = getArtistInfoFromDataBase()
-        val artistBiography =
-            if(artistInfo.isEmpty()){
-                getArtistBiographyFromLastFMAPI().apply {
-                    if(this.artistInfo.isNotEmpty())
-                        saveArtistInfoInDataBase(this.artistInfo)
-                }
-            } else {
-                Biography(artistInfo, DEFAULT_STRING, true)
+    override fun getArtistBiography(artistName: String): Biography {
+        var artistBiography = lastFmLocalStorage.getArtistInfo(artistName)
+        if (artistBiography == null) {
+            try {
+                artistBiography = lastFMService.getArtistBiography(artistName)
+                if(artistBiography != null)
+                    lastFmLocalStorage.saveArtist(artistName, artistBiography)
             }
-        return artistBiography
+            catch (e: Exception) {
+                artistBiography = null
+            }
+        }
+        return artistBiography ?: EmptyBiography
     }
 }
 
