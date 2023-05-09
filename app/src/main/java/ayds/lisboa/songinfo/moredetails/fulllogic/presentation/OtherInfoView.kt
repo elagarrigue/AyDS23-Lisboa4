@@ -1,33 +1,38 @@
 package ayds.lisboa.songinfo.moredetails.fulllogic.presentation
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.text.Html
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ayds.lisboa.songinfo.R
-import ayds.lisboa.songinfo.moredetails.fulllogic.Biography
+import ayds.lisboa.songinfo.moredetails.fulllogic.DependencyInjector
 import ayds.lisboa.songinfo.moredetails.fulllogic.OtherInfoWindow
-import ayds.lisboa.songinfo.moredetails.fulllogic.PREFIX
-import ayds.lisboa.songinfo.moredetails.fulllogic.URL_LAST_FM_IMAGE
+import ayds.lisboa.songinfo.moredetails.fulllogic.presentation.OtherInfoUiState.Companion.URL_LAST_FM_IMAGE
 import com.squareup.picasso.Picasso
 
 interface OtherInfoView {
-    fun updateArtistInfoView()
+    var uiState: OtherInfoUiState
+    fun updateViewInfo(artistInfo: String)
 }
 
 class OtherInfoViewImpl : AppCompatActivity(), OtherInfoView {
+    override var uiState = OtherInfoUiState()
+
     private lateinit var artistInfoTextView: TextView
     private lateinit var artistName: String
     private lateinit var openUrlButtonView: View
     private lateinit var lastFmImageView: ImageView
-    private val otherInfoPresenter: Presenter = Presenter()
+    private lateinit var otherInfoPresenter: OtherInfoPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView()
         initViews()
+        initDependencyInjector()
+        initObservers()
         updateArtistInfoView()
     }
 
@@ -41,30 +46,40 @@ class OtherInfoViewImpl : AppCompatActivity(), OtherInfoView {
         openUrlButtonView = findViewById(R.id.openUrlButton)
     }
 
-    private fun updateArtistInfoView() {
-        updateArtistName()
-        searchArtistInfo()
+    private fun initDependencyInjector(){
+        DependencyInjector.init(this)
+        otherInfoPresenter = DependencyInjector.getPresenter()
     }
 
-    private fun updateArtistName() {
+
+    private fun initObservers() {
+        otherInfoPresenter.uiStateObservable
+            .subscribe { value -> updateUiState(value) }
+    }
+
+    private fun updateUiState(uiState: OtherInfoUiState){
+        this.uiState = uiState
+        setUrlButton(this.uiState.artistUrl)
+        updateViewInfo(this.uiState.artistInfoHTML)
+    }
+
+    private fun updateArtistInfoView() {
+        setArtistName()
+        updateArtistInfo()
+    }
+
+    private fun setArtistName() {
         artistName = intent.getStringExtra(OtherInfoWindow.ARTIST_NAME_EXTRA).toString()
     }
 
-    private fun searchArtistInfo() {
+    private fun updateArtistInfo() {
         Thread {
-            updateArtistInfo()
+            searchArtistInfo()
         }.start()
     }
-
-    private fun updateArtistInfo() {
-        val biography = getArtistBiography()
-        when (biography.isLocallyStored) {
-            false -> setUrlButton(biography.url)
-            else -> {}
-        }
-        updateViewInfo(biography)
+    private fun searchArtistInfo() {
+        otherInfoPresenter.searchArtistBiography(artistName)
     }
-
 
     private fun setUrlButton(artistUrl: String) {
         openUrlButtonView.setOnClickListener {
@@ -72,11 +87,16 @@ class OtherInfoViewImpl : AppCompatActivity(), OtherInfoView {
         }
     }
 
-    private fun updateViewInfo(artistBiography: Biography) {
+    private fun startActivityOnClick(artistUrl: String){
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(artistUrl)
+        startActivity(intent)
+    }
+
+    override fun updateViewInfo(artistInfo: String) {
         runOnUiThread {
             loadLastFMLogo()
-            val formattedArtistInfo = getFormattedArtistInfo(artistBiography)
-            loadArtistInfo(formattedArtistInfo)
+            artistInfoTextView.text = artistInfo
         }
     }
 
@@ -84,22 +104,7 @@ class OtherInfoViewImpl : AppCompatActivity(), OtherInfoView {
         Picasso.get().load(URL_LAST_FM_IMAGE).into(lastFmImageView)
     }
 
-
-    private fun getFormattedArtistInfo(artistBiography: Biography): String {
-        val prefix =
-            if (artistBiography.isLocallyStored)
-                PREFIX
-            else
-                ayds.lisboa.songinfo.moredetails.fulllogic.DEFAULT_STRING
-        return "$prefix${artistBiography.artistInfo}"
+    companion object {
+        const val ARTIST_NAME_EXTRA = "artistName"
     }
-
-    private fun loadArtistInfo(artistInfo: String) {
-        artistInfoTextView.text = Html.fromHtml(artistInfo)
-    }
-
-    private fun loadArtistInfo(artistInfo: String) {
-        artistInfoTextView.text = Html.fromHtml(artistInfo)
-    }
-
 }

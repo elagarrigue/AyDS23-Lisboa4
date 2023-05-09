@@ -53,26 +53,9 @@ class OtherInfoWindow : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView()
-        initViews()
-        initDatabase()
-        createRetrofit()
-        createLastFMAPI()
         updateArtistInfoView()
     }
 
-    private fun initViews() {
-        lastFmImageView = findViewById(R.id.imageView)
-        artistInfoTextView = findViewById(R.id.artistInfoTextView)
-        openUrlButtonView = findViewById(R.id.openUrlButton)
-    }
-
-    private fun setContentView() {
-        setContentView(R.layout.activity_other_info)
-    }
-
-    private fun initDatabase() {
-        dataBase = DataBase(this)
-    }
 
     private fun updateArtistInfoView() {
         updateArtistName()
@@ -83,16 +66,6 @@ class OtherInfoWindow : AppCompatActivity() {
         artistName = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
     }
 
-    private fun createRetrofit() {
-        retrofit = Retrofit.Builder()
-            .baseUrl(URL_BASE_API)
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build()
-    }
-
-    private fun createLastFMAPI() {
-        lastFMAPI = retrofit.create(LastFMAPI::class.java)
-    }
 
     private fun searchArtistInfo() {
         Thread {
@@ -107,76 +80,6 @@ class OtherInfoWindow : AppCompatActivity() {
             else -> {}
         }
         updateViewInfo(biography)
-    }
-
-    private fun getArtistBiography(): Biography {
-        val artistInfo = getArtistInfoFromDataBase()
-        val artistBiography =
-            if(artistInfo.isEmpty()){
-                getArtistBiographyFromLastFMAPI().apply {
-                    if(this.artistInfo.isNotEmpty())
-                        saveArtistInfoInDataBase(this.artistInfo)
-                }
-            } else {
-                Biography(artistInfo, DEFAULT_STRING, true)
-            }
-        return artistBiography
-    }
-
-    private fun getArtistBiographyFromLastFMAPI(): Biography {
-        val artist = getArtistFromLastFMAPI()
-        val artistInfo = getArtistInfoFromJsonResponse(artist)
-        val artistUrl = getArtistUrl(artist)
-        return Biography(artistInfo, artistUrl, false)
-    }
-
-    private fun getArtistUrl(artist: JsonObject): String {
-        return artist[JSON_URL].asString
-    }
-
-    private fun getArtistInfoFromDataBase(): String {
-        return dataBase.getArtistInfo(artistName) ?: DEFAULT_STRING
-    }
-
-    private fun getArtistInfoFromJsonResponse(artist: JsonObject): String {
-        val bioContent = getBioContent(artist)
-        return  if (bioContent != null) {
-                    val artistInfo = bioContent.asString.replace(ESCAPED_NEW_LINE, NEW_LINE)
-                    textToHtml(artistInfo, artistName)
-                } else
-                    DEFAULT_STRING
-    }
-
-    private fun getArtistFromLastFMAPI(): JsonObject {
-        val callLastAPIResponse = lastFMAPI.getArtistInfo(artistName).execute()
-        val gson = Gson()
-        val jobj = gson.fromJson(callLastAPIResponse.body(), JsonObject::class.java)
-        return jobj[JSON_ARTIST].asJsonObject
-    }
-
-    private  fun getBioContent(artist: JsonObject): JsonElement?{
-        val bio = artist[JSON_BIO].asJsonObject
-        return bio[JSON_CONTENT]
-    }
-
-    private fun textToHtml(text: String, term: String?): String {
-        val builder = StringBuilder()
-        builder.append("$HTML_HTML_OPEN$HTML_DIV_W400_OPEN")
-        builder.append(HTML_FONT_FACE_ARIAL_OPEN)
-        val textWithBold = text
-            .replace(SIMPLE_QUOTE, HTML_SPACE)
-            .replace(NEW_LINE, HTML_BR)
-            .replace(
-                "$FLAG_INSENSITIVE_UPPER_LOWER_CASE$term".toRegex(),
-                HTML_B_OPEN + term!!.uppercase(Locale.getDefault()) + HTML_B_CLOSE
-            )
-        builder.append(textWithBold)
-        builder.append("$HTML_FONT_CLOSE$HTML_DIV_CLOSE$HTML_HTML_CLOSE")
-        return builder.toString()
-    }
-
-    private fun saveArtistInfoInDataBase(artistInfo: String) {
-        dataBase.saveArtist(artistName, artistInfo)
     }
 
     private fun setUrlButton(artistUrl: String) {
@@ -197,10 +100,6 @@ class OtherInfoWindow : AppCompatActivity() {
             val formattedArtistInfo = getFormattedArtistInfo(artistBiography)
             loadArtistInfo(formattedArtistInfo)
         }
-    }
-
-    private fun loadLastFMLogo(){
-        Picasso.get().load(URL_LAST_FM_IMAGE).into(lastFmImageView)
     }
 
     private fun getFormattedArtistInfo(artistBiography: Biography): String {
