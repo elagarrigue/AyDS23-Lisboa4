@@ -10,6 +10,7 @@ private const val JSON_CONTENT = "content"
 private const val JSON_URL = "url"
 private const val NEW_LINE = "\n"
 private const val ESCAPED_NEW_LINE = "\\n"
+private const val DEFAULT_STRING = ""
 
 internal class LastFMAPIToBiographyResolver {
 

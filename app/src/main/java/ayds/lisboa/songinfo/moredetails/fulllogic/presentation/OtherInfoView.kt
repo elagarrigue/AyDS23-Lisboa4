@@ -3,13 +3,13 @@ package ayds.lisboa.songinfo.moredetails.fulllogic.presentation
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Html
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ayds.lisboa.songinfo.R
 import ayds.lisboa.songinfo.moredetails.fulllogic.DependencyInjector
-import ayds.lisboa.songinfo.moredetails.fulllogic.OtherInfoWindow
 import ayds.lisboa.songinfo.moredetails.fulllogic.presentation.OtherInfoUiState.Companion.URL_LAST_FM_IMAGE
 import com.squareup.picasso.Picasso
 
@@ -69,7 +69,7 @@ class OtherInfoViewImpl : AppCompatActivity(), OtherInfoView {
     }
 
     private fun setArtistName() {
-        artistName = intent.getStringExtra(OtherInfoWindow.ARTIST_NAME_EXTRA).toString()
+        artistName = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
     }
 
     private fun updateArtistInfo() {
@@ -96,7 +96,7 @@ class OtherInfoViewImpl : AppCompatActivity(), OtherInfoView {
     override fun updateViewInfo(artistInfo: String) {
         runOnUiThread {
             loadLastFMLogo()
-            artistInfoTextView.text = artistInfo
+            artistInfoTextView.text = Html.fromHtml(artistInfo)
         }
     }
 

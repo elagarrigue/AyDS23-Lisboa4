@@ -4,8 +4,8 @@ private const val DEFAULT_STRING = ""
 
 data class OtherInfoUiState (
     val artistInfoHTML :String = DEFAULT_STRING,
-    val  artistUrl: String = DEFAULT_STRING,
-    val lastFMImage:String =URL_LAST_FM_IMAGE
+    val artistUrl: String = DEFAULT_STRING,
+    val lastFMImage:String = URL_LAST_FM_IMAGE
     ){
 
     companion object {
