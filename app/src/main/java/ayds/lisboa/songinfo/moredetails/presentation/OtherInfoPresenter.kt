@@ -14,11 +14,12 @@ interface OtherInfoPresenter {
 
     fun searchArtistBiography(artistName: String)
 }
-class OtherInfoPresenterImpl (private val biographyRepository: BiographyRepository):
-    OtherInfoPresenter
-{
-    override val uiStateObservable = Subject<OtherInfoUiState>()
+class OtherInfoPresenterImpl (
+    private val biographyRepository: BiographyRepository,
+    private val otherInfoHtmlHelper: OtherInfoHtmlHelper
+) : OtherInfoPresenter {
 
+    override val uiStateObservable = Subject<OtherInfoUiState>()
     override fun searchArtistBiography(artistName: String) {
         Thread {
             searchArtistInfo(artistName)
@@ -35,7 +36,7 @@ class OtherInfoPresenterImpl (private val biographyRepository: BiographyReposito
 
     private fun updateUiState(artistBiography: ArtistBiography, artistName: String) {
         val formattedArtistInfo = getFormattedArtistInfo(artistBiography)
-        val htmlArtistInfo = OtherInfoHtmlHelper.textToHtml(formattedArtistInfo, artistName)
+        val htmlArtistInfo = otherInfoHtmlHelper.textToHtml(formattedArtistInfo, artistName)
         val uiState = OtherInfoUiState(
             htmlArtistInfo,
             artistBiography.url,

@@ -10,9 +10,7 @@ import ayds.lisboa.songinfo.moredetails.data.local.sqldb.CursorToArtistMapperImp
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorage
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.domain.BiographyRepository
-import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoPresenter
-import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoPresenterImpl
-import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoView
+import ayds.lisboa.songinfo.moredetails.presentation.*
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
@@ -25,6 +23,7 @@ object DependencyInjector {
     private lateinit var lastFMLocalStorage: LastFMLocalStorage
     private lateinit var lastFMService: LastFMService
     private lateinit var biographyRepository: BiographyRepository
+    private lateinit var otherInfoHtmlHelper: OtherInfoHtmlHelper
     fun init(otherInfoView: OtherInfoView){
         setOtherInfoView(otherInfoView)
         createLastFmLocalStorage()
@@ -40,7 +39,6 @@ object DependencyInjector {
     private fun createLastFmLocalStorage() {
         val cursorToArtistMapper = CursorToArtistMapperImpl()
         lastFMLocalStorage = LastFMLocalStorageImpl(otherInfoView as Context, cursorToArtistMapper)
-
     }
 
     private fun createLastFmService() {
@@ -66,7 +64,8 @@ object DependencyInjector {
     }
 
     private fun createOtherInfoPresenter() {
-        otherInfoPresenter = OtherInfoPresenterImpl(biographyRepository)
+        otherInfoHtmlHelper = OtherInfoHtmlHelperImpl()
+        otherInfoPresenter = OtherInfoPresenterImpl(biographyRepository, otherInfoHtmlHelper)
     }
 
     fun getPresenter(): OtherInfoPresenter {
