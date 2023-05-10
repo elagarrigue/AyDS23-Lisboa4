@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic.presentation;
+package ayds.lisboa.songinfo.moredetails.presentation;
 
 private const val DEFAULT_STRING = ""
 

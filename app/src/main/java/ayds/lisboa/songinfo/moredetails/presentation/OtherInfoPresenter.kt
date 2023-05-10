@@ -1,8 +1,8 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic.presentation
+package ayds.lisboa.songinfo.moredetails.presentation
 
-import ayds.lisboa.songinfo.moredetails.fulllogic.domain.BiographyRepository
-import ayds.lisboa.songinfo.moredetails.fulllogic.domain.Biography
-import ayds.lisboa.songinfo.moredetails.fulllogic.domain.Biography.ArtistBiography
+import ayds.lisboa.songinfo.moredetails.domain.BiographyRepository
+import ayds.lisboa.songinfo.moredetails.domain.Biography
+import ayds.lisboa.songinfo.moredetails.domain.Biography.ArtistBiography
 import ayds.observer.Observable
 import ayds.observer.Subject
 
@@ -14,11 +14,18 @@ interface OtherInfoPresenter {
 
     fun searchArtistBiography(artistName: String)
 }
-class OtherInfoPresenterImpl (private val biographyRepository: BiographyRepository): OtherInfoPresenter
+class OtherInfoPresenterImpl (private val biographyRepository: BiographyRepository):
+    OtherInfoPresenter
 {
     override val uiStateObservable = Subject<OtherInfoUiState>()
 
     override fun searchArtistBiography(artistName: String) {
+        Thread {
+            searchArtistInfo(artistName)
+        }.start()
+    }
+
+    private fun searchArtistInfo(artistName: String) {
         val artistBiography = biographyRepository.getArtistBiography(artistName)
         when(artistBiography){
             is Biography.ArtistBiography -> updateUiState(artistBiography, artistName)
@@ -37,6 +44,15 @@ class OtherInfoPresenterImpl (private val biographyRepository: BiographyReposito
         uiStateObservable.notify(uiState)
     }
 
+    private fun getFormattedArtistInfo(artistBiography: ArtistBiography): String {
+        val prefix =
+            if (artistBiography.isLocallyStored)
+                PREFIX
+            else
+                DEFAULT_STRING
+        return "$prefix${artistBiography.artistInfo}"
+    }
+
     private fun updateNoResultsUiState() {
         val emptyUiState = OtherInfoUiState(
                 DEFAULT_STRING,
@@ -46,13 +62,4 @@ class OtherInfoPresenterImpl (private val biographyRepository: BiographyReposito
         uiStateObservable.notify(emptyUiState)
     }
 
-
-    private fun getFormattedArtistInfo(artistBiography: ArtistBiography): String {
-        val prefix =
-            if (artistBiography.isLocallyStored)
-                PREFIX
-            else
-                DEFAULT_STRING
-        return "$prefix${artistBiography.artistInfo}"
-    }
 }

@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic.presentation
+package ayds.lisboa.songinfo.moredetails.presentation
 
 import android.content.Intent
 import android.net.Uri
@@ -9,17 +9,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ayds.lisboa.songinfo.R
-import ayds.lisboa.songinfo.moredetails.fulllogic.DependencyInjector
-import ayds.lisboa.songinfo.moredetails.fulllogic.presentation.OtherInfoUiState.Companion.URL_LAST_FM_IMAGE
+import ayds.lisboa.songinfo.moredetails.dependencyInjector.DependencyInjector
+import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoUiState.Companion.URL_LAST_FM_IMAGE
 import com.squareup.picasso.Picasso
 
-interface OtherInfoView {
-    var uiState: OtherInfoUiState
-    fun updateViewInfo(artistInfo: String)
-}
-
-class OtherInfoViewImpl : AppCompatActivity(), OtherInfoView {
-    override var uiState = OtherInfoUiState()
+class OtherInfoView : AppCompatActivity() {
+    private var uiState = OtherInfoUiState()
 
     private lateinit var artistInfoTextView: TextView
     private lateinit var artistName: String
@@ -73,11 +68,6 @@ class OtherInfoViewImpl : AppCompatActivity(), OtherInfoView {
     }
 
     private fun updateArtistInfo() {
-        Thread {
-            searchArtistInfo()
-        }.start()
-    }
-    private fun searchArtistInfo() {
         otherInfoPresenter.searchArtistBiography(artistName)
     }
 
@@ -93,7 +83,7 @@ class OtherInfoViewImpl : AppCompatActivity(), OtherInfoView {
         startActivity(intent)
     }
 
-    override fun updateViewInfo(artistInfo: String) {
+    private fun updateViewInfo(artistInfo: String) {
         runOnUiThread {
             loadLastFMLogo()
             artistInfoTextView.text = Html.fromHtml(artistInfo)

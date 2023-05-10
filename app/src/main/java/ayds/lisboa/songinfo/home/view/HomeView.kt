@@ -16,7 +16,7 @@ import ayds.lisboa.songinfo.home.model.entities.Song.EmptySong
 import ayds.lisboa.songinfo.home.model.entities.Song
 import ayds.lisboa.songinfo.home.model.entities.Song.SpotifySong
 import ayds.lisboa.songinfo.home.view.HomeUiState.Companion.DEFAULT_IMAGE
-import ayds.lisboa.songinfo.moredetails.fulllogic.presentation.OtherInfoViewImpl
+import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoView
 import ayds.lisboa.songinfo.utils.UtilsInjector
 import ayds.lisboa.songinfo.utils.navigation.NavigationUtils
 import ayds.lisboa.songinfo.utils.view.ImageLoader
@@ -50,8 +50,8 @@ class HomeViewActivity : AppCompatActivity(), HomeView {
     override var uiState: HomeUiState = HomeUiState()
 
     override fun navigateToOtherDetails(artistName: String) {
-        val intent = Intent(this, OtherInfoViewImpl::class.java)
-        intent.putExtra(OtherInfoViewImpl.ARTIST_NAME_EXTRA, artistName)
+        val intent = Intent(this, OtherInfoView::class.java)
+        intent.putExtra(OtherInfoView.ARTIST_NAME_EXTRA, artistName)
         startActivity(intent)
     }
 

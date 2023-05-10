@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic.presentation
+package ayds.lisboa.songinfo.moredetails.presentation
 
 import java.util.*
 
@@ -21,7 +21,7 @@ class OtherInfoHtmlHelper {
     companion object {
         fun textToHtml(text: String, term: String?): String {
             val builder = StringBuilder()
-            builder.append("$HTML_HTML_OPEN}${HTML_DIV_W400_OPEN}")
+            builder.append("$HTML_HTML_OPEN}$HTML_DIV_W400_OPEN")
             builder.append(HTML_FONT_FACE_ARIAL_OPEN)
             val textWithBold = text
                 .replace(SIMPLE_QUOTE, HTML_SPACE)
@@ -31,7 +31,7 @@ class OtherInfoHtmlHelper {
                     HTML_B_OPEN + term!!.uppercase(Locale.getDefault()) + HTML_B_CLOSE
                 )
             builder.append(textWithBold)
-            builder.append("${HTML_FONT_CLOSE}${HTML_DIV_CLOSE}${HTML_HTML_CLOSE}")
+            builder.append("$HTML_FONT_CLOSE$HTML_DIV_CLOSE$HTML_HTML_CLOSE")
             return builder.toString()
         }
     }

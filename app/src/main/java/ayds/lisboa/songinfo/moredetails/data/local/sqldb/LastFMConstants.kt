@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic.data.local.sqldb
+package ayds.lisboa.songinfo.moredetails.data.local.sqldb
 
 const val DATABASE_NAME = "dictionary.db"
 const val DATABASE_VERSION = 1

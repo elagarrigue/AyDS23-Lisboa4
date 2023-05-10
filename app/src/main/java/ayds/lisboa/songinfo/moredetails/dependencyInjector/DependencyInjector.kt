@@ -1,22 +1,23 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic
+package ayds.lisboa.songinfo.moredetails.dependencyInjector
 
 import android.content.Context
-import ayds.lisboa.songinfo.moredetails.fulllogic.data.BiographyRepositoryImpl
-import ayds.lisboa.songinfo.moredetails.fulllogic.data.external.LastFMAPI
-import ayds.lisboa.songinfo.moredetails.fulllogic.data.external.LastFMAPIToBiographyResolver
-import ayds.lisboa.songinfo.moredetails.fulllogic.data.external.LastFMService
-import ayds.lisboa.songinfo.moredetails.fulllogic.data.external.LastFMServiceImpl
-import ayds.lisboa.songinfo.moredetails.fulllogic.data.local.sqldb.CursorToArtistMapperImpl
-import ayds.lisboa.songinfo.moredetails.fulllogic.data.local.sqldb.LastFMLocalStorage
-import ayds.lisboa.songinfo.moredetails.fulllogic.data.local.sqldb.LastFMLocalStorageImpl
-import ayds.lisboa.songinfo.moredetails.fulllogic.domain.BiographyRepository
-import ayds.lisboa.songinfo.moredetails.fulllogic.presentation.OtherInfoPresenter
-import ayds.lisboa.songinfo.moredetails.fulllogic.presentation.OtherInfoPresenterImpl
-import ayds.lisboa.songinfo.moredetails.fulllogic.presentation.OtherInfoView
+import ayds.lisboa.songinfo.moredetails.data.BiographyRepositoryImpl
+import ayds.lisboa.songinfo.moredetails.data.external.LastFMAPI
+import ayds.lisboa.songinfo.moredetails.data.external.LastFMAPIToBiographyResolver
+import ayds.lisboa.songinfo.moredetails.data.external.LastFMService
+import ayds.lisboa.songinfo.moredetails.data.external.LastFMServiceImpl
+import ayds.lisboa.songinfo.moredetails.data.local.sqldb.CursorToArtistMapperImpl
+import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorage
+import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorageImpl
+import ayds.lisboa.songinfo.moredetails.domain.BiographyRepository
+import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoPresenter
+import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoPresenterImpl
+import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoView
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 private const val URL_BASE_API = "https://ws.audioscrobbler.com/2.0/"
+
 object DependencyInjector {
 
     private lateinit var otherInfoView: OtherInfoView
@@ -56,7 +57,7 @@ object DependencyInjector {
             .build()
     }
 
-    private fun createLastFMAPI(retrofit: Retrofit): LastFMAPI{
+    private fun createLastFMAPI(retrofit: Retrofit): LastFMAPI {
         return retrofit.create(LastFMAPI::class.java)
     }
 

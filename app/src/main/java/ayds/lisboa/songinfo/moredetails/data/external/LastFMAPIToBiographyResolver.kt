@@ -1,7 +1,5 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic.data.external
+package ayds.lisboa.songinfo.moredetails.data.external
 
-import ayds.lisboa.songinfo.moredetails.fulllogic.*
-import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 
