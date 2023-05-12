@@ -1,10 +1,8 @@
 package ayds.lisboa.songinfo.moredetails.data.external
 
-import ayds.lisboa.songinfo.moredetails.domain.Biography.ArtistBiography
-import com.google.gson.Gson
-import com.google.gson.JsonObject
+import ayds.lisboa.songinfo.moredetails.domain.entities.Biography.ArtistBiography
+import retrofit2.Response
 
-private const val JSON_ARTIST = "artist"
 
 interface LastFMService {
     fun getArtistBiography(artistName: String): ArtistBiography?
@@ -16,17 +14,15 @@ internal class LastFMServiceImpl(
 ): LastFMService {
 
     override fun getArtistBiography(artistName: String): ArtistBiography? {
-        val artist = getArtistFromLastFMAPI(artistName)
+        val callResponse = getArtistFromLastFMAPI(artistName)
+        val artist = lastFMAPIToBiographyResolver.getArtistFromCallResponse(callResponse)
         val artistInfo = lastFMAPIToBiographyResolver.getArtistInfoFromJsonResponse(artist)
         val artistUrl = lastFMAPIToBiographyResolver.getArtistUrl(artist)
         return ArtistBiography(artistInfo, artistUrl, false)
     }
 
-    private fun getArtistFromLastFMAPI(artistName: String): JsonObject {
-        val callLastAPIResponse = lastFMAPI.getArtistInfo(artistName).execute()
-        val gson = Gson()
-        val jobj = gson.fromJson(callLastAPIResponse.body(), JsonObject::class.java)
-        return jobj[JSON_ARTIST].asJsonObject
+    private fun getArtistFromLastFMAPI(artistName: String): Response<String> {
+        return lastFMAPI.getArtistInfo(artistName).execute()
     }
 }
 

@@ -2,9 +2,9 @@ package ayds.lisboa.songinfo.moredetails.data
 
 import ayds.lisboa.songinfo.moredetails.data.external.LastFMService
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorage
-import ayds.lisboa.songinfo.moredetails.domain.Biography
-import ayds.lisboa.songinfo.moredetails.domain.BiographyRepository
-import ayds.lisboa.songinfo.moredetails.domain.Biography.EmptyBiography
+import ayds.lisboa.songinfo.moredetails.domain.entities.Biography
+import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
+import ayds.lisboa.songinfo.moredetails.domain.entities.Biography.EmptyBiography
 
 class BiographyRepositoryImpl(
     private val lastFmLocalStorage: LastFMLocalStorage,

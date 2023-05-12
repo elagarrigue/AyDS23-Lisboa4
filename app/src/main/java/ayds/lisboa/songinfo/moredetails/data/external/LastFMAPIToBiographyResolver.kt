@@ -1,7 +1,10 @@
 package ayds.lisboa.songinfo.moredetails.data.external
 
+import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import retrofit2.Response
+
 
 private const val JSON_BIO = "bio"
 private const val JSON_CONTENT = "content"
@@ -9,8 +12,15 @@ private const val JSON_URL = "url"
 private const val NEW_LINE = "\n"
 private const val ESCAPED_NEW_LINE = "\\n"
 private const val DEFAULT_STRING = ""
+private const val JSON_ARTIST = "artist"
 
 internal class LastFMAPIToBiographyResolver {
+
+    fun getArtistFromCallResponse(callLastAPIResponse: Response<String>): JsonObject {
+        val gson = Gson()
+        val jobj = gson.fromJson(callLastAPIResponse.body(), JsonObject::class.java)
+        return jobj[JSON_ARTIST].asJsonObject
+    }
 
     fun getArtistInfoFromJsonResponse(artist: JsonObject): String {
         val bioContent = getBioContent(artist)

@@ -20,7 +20,7 @@ interface OtherInfoHtmlHelper
 {
     fun textToHtml(text:String, term: String?): String
 }
-class OtherInfoHtmlHelperImpl: OtherInfoHtmlHelper {
+internal class OtherInfoHtmlHelperImpl: OtherInfoHtmlHelper {
     override fun textToHtml(text: String, term: String?): String {
         val builder = StringBuilder()
         builder.append("$HTML_HTML_OPEN}$HTML_DIV_W400_OPEN")

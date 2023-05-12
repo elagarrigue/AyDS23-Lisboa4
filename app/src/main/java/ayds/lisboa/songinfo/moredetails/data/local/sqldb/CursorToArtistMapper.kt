@@ -1,7 +1,7 @@
 package ayds.lisboa.songinfo.moredetails.data.local.sqldb
 
 import android.database.Cursor
-import ayds.lisboa.songinfo.moredetails.domain.Biography.ArtistBiography
+import ayds.lisboa.songinfo.moredetails.domain.entities.Biography.ArtistBiography
 
 interface CursorToArtistMapper {
     fun map(cursor: Cursor): ArtistBiography?

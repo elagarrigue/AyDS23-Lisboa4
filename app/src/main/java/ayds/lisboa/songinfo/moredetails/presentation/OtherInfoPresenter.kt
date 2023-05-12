@@ -1,8 +1,8 @@
 package ayds.lisboa.songinfo.moredetails.presentation
 
-import ayds.lisboa.songinfo.moredetails.domain.BiographyRepository
-import ayds.lisboa.songinfo.moredetails.domain.Biography
-import ayds.lisboa.songinfo.moredetails.domain.Biography.ArtistBiography
+import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
+import ayds.lisboa.songinfo.moredetails.domain.entities.Biography
+import ayds.lisboa.songinfo.moredetails.domain.entities.Biography.ArtistBiography
 import ayds.observer.Observable
 import ayds.observer.Subject
 
@@ -14,7 +14,7 @@ interface OtherInfoPresenter {
 
     fun searchArtistBiography(artistName: String)
 }
-class OtherInfoPresenterImpl (
+internal class OtherInfoPresenterImpl (
     private val biographyRepository: BiographyRepository,
     private val otherInfoHtmlHelper: OtherInfoHtmlHelper
 ) : OtherInfoPresenter {
@@ -35,16 +35,19 @@ class OtherInfoPresenterImpl (
     }
 
     private fun updateUiState(artistBiography: ArtistBiography, artistName: String) {
+        val uiState = createUiState(artistBiography, artistName)
+        uiStateObservable.notify(uiState)
+    }
+
+    private fun createUiState(artistBiography: ArtistBiography, artistName: String): OtherInfoUiState{
         val formattedArtistInfo = getFormattedArtistInfo(artistBiography)
         val htmlArtistInfo = otherInfoHtmlHelper.textToHtml(formattedArtistInfo, artistName)
-        val uiState = OtherInfoUiState(
+        return OtherInfoUiState(
             htmlArtistInfo,
             artistBiography.url,
             OtherInfoUiState.URL_LAST_FM_IMAGE
         )
-        uiStateObservable.notify(uiState)
     }
-
     private fun getFormattedArtistInfo(artistBiography: ArtistBiography): String {
         val prefix =
             if (artistBiography.isLocallyStored)

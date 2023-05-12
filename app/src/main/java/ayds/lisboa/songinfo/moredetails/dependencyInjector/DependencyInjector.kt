@@ -9,7 +9,7 @@ import ayds.lisboa.songinfo.moredetails.data.external.LastFMServiceImpl
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.CursorToArtistMapperImpl
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorage
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorageImpl
-import ayds.lisboa.songinfo.moredetails.domain.BiographyRepository
+import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
 import ayds.lisboa.songinfo.moredetails.presentation.*
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
