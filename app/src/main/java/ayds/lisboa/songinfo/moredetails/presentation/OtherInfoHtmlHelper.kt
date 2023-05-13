@@ -18,12 +18,12 @@ private const val FLAG_INSENSITIVE_UPPER_LOWER_CASE = "(?i)"
 
 interface OtherInfoHtmlHelper
 {
-    fun textToHtml(text:String, term: String?): String
+    fun textToHtml(text:String, term: String): String
 }
 internal class OtherInfoHtmlHelperImpl: OtherInfoHtmlHelper {
-    override fun textToHtml(text: String, term: String?): String {
+    override fun textToHtml(text: String, term: String): String {
         val builder = StringBuilder()
-        builder.append("$HTML_HTML_OPEN}$HTML_DIV_W400_OPEN")
+        builder.append("$HTML_HTML_OPEN$HTML_DIV_W400_OPEN")
         builder.append(HTML_FONT_FACE_ARIAL_OPEN)
         val textWithBold = text
             .replace(SIMPLE_QUOTE, HTML_SPACE)
