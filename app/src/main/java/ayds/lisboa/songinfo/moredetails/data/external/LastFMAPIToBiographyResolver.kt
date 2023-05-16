@@ -1,5 +1,6 @@
 package ayds.lisboa.songinfo.moredetails.data.external
 
+import ayds.lisboa.songinfo.moredetails.domain.entities.Biography.ArtistBiography
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -16,13 +17,19 @@ private const val JSON_ARTIST = "artist"
 
 internal class LastFMAPIToBiographyResolver {
 
-    fun getArtistFromCallResponse(callLastAPIResponse: Response<String>): JsonObject {
+    fun getArtistBiography(callResponse: Response<String>): ArtistBiography {
+        val artist = getArtistFromCallResponse(callResponse)
+        val artistInfo = getArtistInfoFromResponse(artist)
+        val artistUrl = getArtistUrl(artist)
+        return ArtistBiography(artistInfo, artistUrl, false)
+    }
+    private fun getArtistFromCallResponse(callLastAPIResponse: Response<String>): JsonObject {
         val gson = Gson()
         val jobj = gson.fromJson(callLastAPIResponse.body(), JsonObject::class.java)
         return jobj[JSON_ARTIST].asJsonObject
     }
 
-    fun getArtistInfoFromJsonResponse(artist: JsonObject): String {
+    private fun getArtistInfoFromResponse(artist: JsonObject): String {
         val bioContent = getBioContent(artist)
         return bioContent?.asString?.replace(ESCAPED_NEW_LINE, NEW_LINE) ?: DEFAULT_STRING
     }
@@ -32,7 +39,7 @@ internal class LastFMAPIToBiographyResolver {
         return bio[JSON_CONTENT]
     }
 
-    fun getArtistUrl(artist: JsonObject): String {
+    private fun getArtistUrl(artist: JsonObject): String {
         return artist[JSON_URL].asString
     }
 }
