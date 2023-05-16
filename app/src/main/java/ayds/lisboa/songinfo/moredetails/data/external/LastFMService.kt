@@ -15,10 +15,7 @@ internal class LastFMServiceImpl(
 
     override fun getArtistBiography(artistName: String): ArtistBiography? {
         val callResponse = getArtistFromLastFMAPI(artistName)
-        val artist = lastFMAPIToBiographyResolver.getArtistFromCallResponse(callResponse)
-        val artistInfo = lastFMAPIToBiographyResolver.getArtistInfoFromJsonResponse(artist)
-        val artistUrl = lastFMAPIToBiographyResolver.getArtistUrl(artist)
-        return ArtistBiography(artistInfo, artistUrl, false)
+        return lastFMAPIToBiographyResolver.getArtistBiography(callResponse)
     }
 
     private fun getArtistFromLastFMAPI(artistName: String): Response<String> {
