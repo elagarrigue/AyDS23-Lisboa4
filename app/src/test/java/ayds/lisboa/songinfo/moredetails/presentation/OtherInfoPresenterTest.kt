@@ -6,7 +6,6 @@ import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.Assert.assertEquals
 import org.junit.Test
 
 private const val PREFIX = "[*]"
@@ -16,7 +15,7 @@ class OtherInfoPresenterImplTest {
     private val biographyRepository: BiographyRepository = mockk()
     private val otherInfoHtmlHelper: OtherInfoHtmlHelper = mockk()
 
-    private val otherInfoPresenter: OtherInfoPresenterImpl by lazy {
+    private val otherInfoPresenter: OtherInfoPresenter by lazy {
         OtherInfoPresenterImpl(biographyRepository, otherInfoHtmlHelper)
     }
 
@@ -28,18 +27,22 @@ class OtherInfoPresenterImplTest {
             "url",
             true
         )
-        every { otherInfoHtmlHelper.textToHtml(any(), any()) } returns "formattedHtml"
-
-        otherInfoPresenter.searchArtistInfo(artistName)
+        every { otherInfoHtmlHelper.textToHtml("[*]artistInfo", artistName) } returns "formattedHtml"
 
         val expectedUiState = OtherInfoUiState(
             "formattedHtml",
             "url",
             OtherInfoUiState.URL_LAST_FM_IMAGE
-            )
+        )
 
-        val actualUiState = otherInfoPresenter.uiStateObservable.lastValue()
-        assertEquals(expectedUiState, actualUiState)
+        val uiStateTester: (OtherInfoUiState) -> Unit = mockk(relaxed = true)
+        otherInfoPresenter.uiStateObservable.subscribe {
+            uiStateTester(it)
+        }
+
+        otherInfoPresenter.searchArtistBiography(artistName)
+
+        verify { uiStateTester(expectedUiState) }
     }
 
     @Test
@@ -47,15 +50,19 @@ class OtherInfoPresenterImplTest {
         val artistName = "artist"
         every { biographyRepository.getArtistBiography(artistName) } returns EmptyBiography
 
-        otherInfoPresenter.searchArtistInfo(artistName)
-
         val expectedUiState = OtherInfoUiState(
             artistInfoHTML = "",
             artistUrl = "",
             lastFMImage = OtherInfoUiState.URL_LAST_FM_IMAGE
         )
-        val actualUiState = otherInfoPresenter.uiStateObservable.lastValue()
-        assertEquals(expectedUiState, actualUiState)
+        val uiStateTester: (OtherInfoUiState) -> Unit = mockk(relaxed = true)
+        otherInfoPresenter.uiStateObservable.subscribe {
+            uiStateTester(it)
+        }
+
+        otherInfoPresenter.searchArtistBiography(artistName)
+
+        verify { uiStateTester(expectedUiState) }
     }
 
     @Test
@@ -66,9 +73,9 @@ class OtherInfoPresenterImplTest {
             "url",
             true
         )
-        every { otherInfoHtmlHelper.textToHtml(any(), any()) } returns "formattedHtml"
+        every { otherInfoHtmlHelper.textToHtml("[*]artistInfo", artistName) } returns "formattedHtml"
 
-        otherInfoPresenter.searchArtistInfo(artistName)
+        otherInfoPresenter.searchArtistBiography(artistName)
 
         verify { otherInfoHtmlHelper.textToHtml("${PREFIX}artistInfo", artistName) }
     }

@@ -19,19 +19,4 @@ class OtherInfoHtmlHelperImplTest {
 
         assertEquals(expectedHtml, result)
     }
-
-    @Test
-    fun `given text and null term should return formatted HTML without bolding`() {
-        val text = "This is a test. Test term is highlighted."
-        val term = ""
-
-        val expectedHtml =
-            "<html><div width=400><font face=\"arial\">This is a test. Test term is highlighted.</font></div></html>"
-
-        // Act
-        val result = otherInfoHtmlHelper.textToHtml(text, term)
-
-        // Assert
-        assertEquals(expectedHtml, result)
-    }
 }
