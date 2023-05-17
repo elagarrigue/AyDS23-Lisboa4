@@ -19,7 +19,6 @@ class OtherInfoHtmlHelperImplTest {
 
         assertEquals(expectedHtml, result)
     }
-}
 
     @Test
     fun `given text and null term should return formatted HTML without bolding`() {
