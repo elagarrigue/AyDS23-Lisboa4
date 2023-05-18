@@ -2,17 +2,19 @@ package ayds.lisboa.songinfo.home.view
 
 import ayds.lisboa.songinfo.home.model.entities.Song
 import ayds.lisboa.songinfo.home.model.entities.Song.SpotifySong
+import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class SongDescriptionHelperTest {
-    private val releaseDateFactory: ReleaseDateFactory = ReleaseDateFactoryImpl
+    private val releaseDateFactory: ReleaseDateFactory = mockk(relaxUnitFun = true)
+    private val releaseDateFormatter: ReleaseDateFormatter = mockk(relaxUnitFun = true)
     private val songDescriptionHelper by lazy { SongDescriptionHelperImpl(releaseDateFactory) }
 
     @Test
     fun `given a local song it should return the description`() {
-        val song: Song = SpotifySong(
+        val song: SpotifySong = SpotifySong(
             "id",
             "Plush",
             "Stone Temple Pilots",
@@ -23,6 +25,9 @@ class SongDescriptionHelperTest {
             "url",
             true,
         )
+
+        every { releaseDateFactory.get(song)} returns releaseDateFormatter
+        every { releaseDateFormatter.formatDate()} returns "1992 (leap year)"
 
         val result = songDescriptionHelper.getSongDescriptionText(song)
 
@@ -37,7 +42,7 @@ class SongDescriptionHelperTest {
 
     @Test
     fun `given a non local song it should return the description`() {
-        val song: Song = SpotifySong(
+        val song: SpotifySong = SpotifySong(
             "id",
             "Plush",
             "Stone Temple Pilots",
@@ -48,6 +53,9 @@ class SongDescriptionHelperTest {
             "url",
             false,
         )
+
+        every { releaseDateFactory.get(song)} returns releaseDateFormatter
+        every { releaseDateFormatter.formatDate()} returns "1992 (leap year)"
 
         val result = songDescriptionHelper.getSongDescriptionText(song)
 
