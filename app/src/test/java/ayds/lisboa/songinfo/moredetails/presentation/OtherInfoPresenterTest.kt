@@ -27,7 +27,7 @@ class OtherInfoPresenterImplTest {
             "url",
             true
         )
-        every { otherInfoHtmlHelper.textToHtml("[*]artistInfo", artistName) } returns "formattedHtml"
+        every { otherInfoHtmlHelper.textToHtml("${PREFIX}artistInfo", artistName) } returns "formattedHtml"
 
         val expectedUiState = OtherInfoUiState(
             "formattedHtml",
