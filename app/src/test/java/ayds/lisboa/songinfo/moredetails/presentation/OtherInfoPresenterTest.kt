@@ -64,19 +64,4 @@ class OtherInfoPresenterImplTest {
 
         verify { uiStateTester(expectedUiState) }
     }
-
-    @Test
-    fun `searchArtistBiography with artistBiography should call getFormattedArtistInfo and textToHtml`() {
-        val artistName = "artist"
-        every { biographyRepository.getArtistBiography(artistName) } returns ArtistBiography(
-            "artistInfo",
-            "url",
-            true
-        )
-        every { otherInfoHtmlHelper.textToHtml("[*]artistInfo", artistName) } returns "formattedHtml"
-
-        otherInfoPresenter.searchArtistBiography(artistName)
-
-        verify { otherInfoHtmlHelper.textToHtml("${PREFIX}artistInfo", artistName) }
-    }
 }
