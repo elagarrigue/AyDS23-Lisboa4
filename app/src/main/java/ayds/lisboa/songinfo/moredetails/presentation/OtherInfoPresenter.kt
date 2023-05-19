@@ -1,8 +1,8 @@
 package ayds.lisboa.songinfo.moredetails.presentation
 
-import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
-import ayds.lisboa.songinfo.moredetails.domain.entities.Biography
 import ayds.lisboa.songinfo.moredetails.domain.entities.Biography.ArtistBiography
+import ayds.lisboa.songinfo.moredetails.domain.entities.Biography.EmptyBiography
+import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
 import ayds.observer.Observable
 import ayds.observer.Subject
 
@@ -26,11 +26,11 @@ internal class OtherInfoPresenterImpl (
         }.start()
     }
 
-    private fun searchArtistInfo(artistName: String) {
+     private fun searchArtistInfo(artistName: String) {
         val artistBiography = biographyRepository.getArtistBiography(artistName)
         when(artistBiography){
-            is Biography.ArtistBiography -> updateUiState(artistBiography, artistName)
-            is Biography.EmptyBiography -> updateNoResultsUiState()
+            is ArtistBiography -> updateUiState(artistBiography, artistName)
+            is EmptyBiography -> updateNoResultsUiState()
         }
     }
 
