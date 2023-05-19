@@ -1,0 +1,3 @@
+[submodule "libs/LastFM_API"]
+	path = libs/LastFM_API
+	url = https://github.com/alvaromosconi/LastFM_API
