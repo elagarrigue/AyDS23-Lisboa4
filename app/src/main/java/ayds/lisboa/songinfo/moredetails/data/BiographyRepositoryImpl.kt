@@ -1,5 +1,4 @@
 package ayds.lisboa.songinfo.moredetails.data
-
 import ayds.lisboa.songinfo.moredetails.data.external.LastFMService
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorage
 import ayds.lisboa.songinfo.moredetails.domain.entities.Biography
