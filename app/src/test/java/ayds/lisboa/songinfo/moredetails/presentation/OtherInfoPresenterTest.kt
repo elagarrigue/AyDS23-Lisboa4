@@ -20,6 +20,31 @@ class OtherInfoPresenterImplTest {
     }
 
     @Test
+    fun `searchArtistBiography with artistBiography should update UI state with not stored artist biography `() {
+        val artistName = "artist"
+        every { biographyRepository.getArtistBiography(artistName) } returns ArtistBiography(
+            "artistInfo",
+            "url",
+            false
+        )
+        every { otherInfoHtmlHelper.textToHtml("artistInfo", artistName) } returns "formattedHtml"
+
+        val expectedUiState = OtherInfoUiState(
+            "formattedHtml",
+            "url",
+            OtherInfoUiState.URL_LAST_FM_IMAGE
+        )
+
+        val uiStateTester: (OtherInfoUiState) -> Unit = mockk(relaxed = true)
+        otherInfoPresenter.uiStateObservable.subscribe {
+            uiStateTester(it)
+        }
+
+        otherInfoPresenter.searchArtistBiography(artistName)
+
+        verify { uiStateTester(expectedUiState) }
+    }
+    @Test
     fun `searchArtistBiography with artistBiography should update UI state with artist biography`() {
         val artistName = "artist"
         every { biographyRepository.getArtistBiography(artistName) } returns ArtistBiography(
