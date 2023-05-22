@@ -1,9 +1,10 @@
 package ayds.lisboa.songinfo.moredetails.data
 
-import ayds.lisboa.songinfo.moredetails.data.external.LastFMService
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorage
 import ayds.lisboa.songinfo.moredetails.domain.entities.Biography
 import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
+import com.example.lastfmapi.external.ArtistBiography
+import com.example.lastfmapi.external.LastFMService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -33,7 +34,7 @@ class BiographyRepositoryImplTest {
 
     @Test
     fun `given non-existing artist biography should fetch and save the biography`() {
-        val biography = Biography.ArtistBiography("Artist biography", "url", false)
+        val biography = ArtistBiography("Artist biography", "url", false)
         every { lastFmLocalStorage.getArtistInfo("artist") } returns null
         every { lastFMService.getArtistBiography("artist") } returns biography
 
@@ -41,7 +42,9 @@ class BiographyRepositoryImplTest {
 
         assertEquals(biography, result)
         assertFalse(biography.isLocallyStored)
-        verify { lastFmLocalStorage.saveArtist("artist", biography) }
+
+        val artistBiography = Biography.ArtistBiography(biography.artistInfo, biography.url, biography.isLocallyStored)
+        verify { lastFmLocalStorage.saveArtist("artist", artistBiography) }
     }
 
     @Test

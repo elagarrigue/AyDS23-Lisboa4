@@ -2,15 +2,15 @@ package ayds.lisboa.songinfo.moredetails.dependencyInjector
 
 import android.content.Context
 import ayds.lisboa.songinfo.moredetails.data.BiographyRepositoryImpl
-import ayds.lisboa.songinfo.moredetails.data.external.LastFMAPI
-import ayds.lisboa.songinfo.moredetails.data.external.LastFMAPIToBiographyResolver
-import ayds.lisboa.songinfo.moredetails.data.external.LastFMService
-import ayds.lisboa.songinfo.moredetails.data.external.LastFMServiceImpl
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.CursorToArtistMapperImpl
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorage
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
 import ayds.lisboa.songinfo.moredetails.presentation.*
+import com.example.lastfmapi.external.LastFMAPI
+import com.example.lastfmapi.external.LastFMAPIToBiographyResolver
+import com.example.lastfmapi.external.LastFMService
+import com.example.lastfmapi.external.LastFMServiceImpl
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 

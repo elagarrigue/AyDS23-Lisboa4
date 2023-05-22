@@ -1,9 +1,9 @@
 package ayds.lisboa.songinfo.moredetails.data
-import ayds.lisboa.songinfo.moredetails.data.external.LastFMService
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorage
 import ayds.lisboa.songinfo.moredetails.domain.entities.Biography
 import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
 import ayds.lisboa.songinfo.moredetails.domain.entities.Biography.EmptyBiography
+import com.example.lastfmapi.external.LastFMService
 
 class BiographyRepositoryImpl(
     private val lastFmLocalStorage: LastFMLocalStorage,
@@ -14,7 +14,14 @@ class BiographyRepositoryImpl(
         var artistBiography = lastFmLocalStorage.getArtistInfo(artistName)
         if (artistBiography == null) {
             try {
-                artistBiography = lastFMService.getArtistBiography(artistName)
+                val lastFmBiography = lastFMService.getArtistBiography(artistName)
+                artistBiography = lastFmBiography?.let {
+                    Biography.ArtistBiography(
+                        it.artistInfo,
+                        it.url,
+                        it.isLocallyStored
+                    )
+                }
                 if(artistBiography != null)
                     lastFmLocalStorage.saveArtist(artistName, artistBiography)
             }
