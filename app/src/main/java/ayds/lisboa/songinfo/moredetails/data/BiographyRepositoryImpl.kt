@@ -3,7 +3,7 @@ import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorage
 import ayds.lisboa.songinfo.moredetails.domain.entities.Biography
 import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
 import ayds.lisboa.songinfo.moredetails.domain.entities.Biography.EmptyBiography
-import com.example.lastfmapi.external.LastFMService
+import lisboa4_LastFM.LastFMService
 
 class BiographyRepositoryImpl(
     private val lastFmLocalStorage: LastFMLocalStorage,
