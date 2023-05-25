@@ -7,7 +7,7 @@ import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorage
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
 import ayds.lisboa.songinfo.moredetails.presentation.*
-import lisboa4_LastFM.*
+import lisboa4LastFM.*
 
 object DependencyInjector {
 

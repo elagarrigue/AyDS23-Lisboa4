@@ -3,8 +3,8 @@ package ayds.lisboa.songinfo.moredetails.data
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorage
 import ayds.lisboa.songinfo.moredetails.domain.entities.Biography
 import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
-import lisboa4_LastFM.ArtistBiography
-import lisboa4_LastFM.LastFMService
+import lisboa4LastFM.ArtistBiography
+import lisboa4LastFM.LastFMService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
