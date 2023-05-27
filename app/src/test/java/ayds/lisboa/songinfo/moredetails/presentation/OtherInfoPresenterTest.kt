@@ -1,7 +1,7 @@
 package ayds.lisboa.songinfo.moredetails.presentation
 
-import ayds.lisboa.songinfo.moredetails.domain.entities.Biography.ArtistBiography
-import ayds.lisboa.songinfo.moredetails.domain.entities.Biography.EmptyBiography
+import ayds.lisboa.songinfo.moredetails.domain.entities.Card.ArtistBiography
+import ayds.lisboa.songinfo.moredetails.domain.entities.Card.EmptyBiography
 import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
 import io.mockk.every
 import io.mockk.mockk

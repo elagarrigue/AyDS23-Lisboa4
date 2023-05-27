@@ -2,7 +2,7 @@ package ayds.lisboa.songinfo.moredetails.dependencyInjector
 
 import android.content.Context
 import ayds.lisboa.songinfo.moredetails.data.BiographyRepositoryImpl
-import ayds.lisboa.songinfo.moredetails.data.local.sqldb.CursorToArtistMapperImpl
+import ayds.lisboa.songinfo.moredetails.data.local.sqldb.CursorToCardMapperImpl
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorage
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
@@ -30,7 +30,7 @@ object DependencyInjector {
     }
 
     private fun createLastFmLocalStorage() {
-        val cursorToArtistMapper = CursorToArtistMapperImpl()
+        val cursorToArtistMapper = CursorToCardMapperImpl()
         lastFMLocalStorage = LastFMLocalStorageImpl(otherInfoView as Context, cursorToArtistMapper)
     }
 

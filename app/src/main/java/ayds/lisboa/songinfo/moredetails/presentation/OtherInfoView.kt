@@ -10,17 +10,18 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ayds.lisboa.songinfo.R
 import ayds.lisboa.songinfo.moredetails.dependencyInjector.DependencyInjector
-import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoUiState.Companion.URL_LAST_FM_IMAGE
+import lisboa4LastFM.ArtistBiography.Companion.URL_LAST_FM_IMAGE
 import com.squareup.picasso.Picasso
 
 class OtherInfoView : AppCompatActivity() {
     private var uiState = OtherInfoUiState()
+    private lateinit var otherInfoPresenter: OtherInfoPresenter
 
     private lateinit var artistInfoTextView: TextView
     private lateinit var artistName: String
     private lateinit var openUrlButtonView: View
     private lateinit var lastFmImageView: ImageView
-    private lateinit var otherInfoPresenter: OtherInfoPresenter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,8 +55,8 @@ class OtherInfoView : AppCompatActivity() {
 
     private fun updateUiState(uiState: OtherInfoUiState){
         this.uiState = uiState
-        setUrlButton(this.uiState.artistUrl)
-        updateViewInfo(this.uiState.artistInfoHTML)
+        setUrlButton(this.uiState.CardsUiState.first().artistUrl)
+        updateViewInfo(this.uiState.CardsUiState.first().artistInfoHTML)
     }
 
     private fun updateArtistInfoView() {

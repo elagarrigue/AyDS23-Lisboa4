@@ -1,7 +1,7 @@
 package ayds.lisboa.songinfo.moredetails.data
 
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorage
-import ayds.lisboa.songinfo.moredetails.domain.entities.Biography
+import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
 import lisboa4LastFM.ArtistBiography
 import lisboa4LastFM.LastFMService
@@ -23,7 +23,7 @@ class BiographyRepositoryImplTest {
 
     @Test
     fun `given existing artist biography should return biography`() {
-        val biography = Biography.ArtistBiography("Artist biography", "url", true)
+        val biography = Card.ArtistBiography("Artist biography", "url", true)
         every { lastFmLocalStorage.getArtistInfo("artist") } returns biography
 
         val result = biographyRepository.getArtistBiography("artist")
@@ -42,7 +42,7 @@ class BiographyRepositoryImplTest {
         assertEquals(biography, result)
         assertFalse(biography.isLocallyStored)
 
-        val artistBiography = Biography.ArtistBiography(biography.artistInfo, biography.url, biography.isLocallyStored)
+        val artistBiography = Card.ArtistBiography(biography.artistInfo, biography.url, biography.isLocallyStored)
         verify { lastFmLocalStorage.saveArtist("artist", artistBiography) }
     }
 
@@ -53,7 +53,7 @@ class BiographyRepositoryImplTest {
 
         val result = biographyRepository.getArtistBiography("artist")
 
-        assertEquals(Biography.EmptyBiography, result)
+        assertEquals(Card.EmptyBiography, result)
     }
 
     @Test
@@ -63,6 +63,6 @@ class BiographyRepositoryImplTest {
 
         val result = biographyRepository.getArtistBiography("artist")
 
-        assertEquals(Biography.EmptyBiography, result)
+        assertEquals(Card.EmptyBiography, result)
     }
 }
