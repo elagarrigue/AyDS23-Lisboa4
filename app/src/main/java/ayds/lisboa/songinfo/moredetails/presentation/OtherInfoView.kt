@@ -10,18 +10,25 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ayds.lisboa.songinfo.R
 import ayds.lisboa.songinfo.moredetails.dependencyInjector.DependencyInjector
-import lisboa4LastFM.ArtistBiography.Companion.URL_LAST_FM_IMAGE
 import com.squareup.picasso.Picasso
 
 class OtherInfoView : AppCompatActivity() {
     private var uiState = OtherInfoUiState()
     private lateinit var otherInfoPresenter: OtherInfoPresenter
 
-    private lateinit var artistInfoTextView: TextView
     private lateinit var artistName: String
-    private lateinit var openUrlButtonView: View
-    private lateinit var lastFmImageView: ImageView
 
+    private lateinit var artistInfoTextViewLastFm: TextView
+    private lateinit var openUrlButtonViewLastFm: View
+    private lateinit var imageViewLastFm: ImageView
+
+    private lateinit var artistInfoTextViewNYT: TextView
+    private lateinit var openUrlButtonViewNYT: View
+    private lateinit var imageViewNYT: ImageView
+
+    private lateinit var artistInfoTextViewWikipedia: TextView
+    private lateinit var openUrlButtonViewWikipedia: View
+    private lateinit var imageViewWikipedia: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,9 +44,27 @@ class OtherInfoView : AppCompatActivity() {
     }
 
     private fun initViews() {
-        lastFmImageView = findViewById(R.id.imageView)
-        artistInfoTextView = findViewById(R.id.artistInfoTextView)
-        openUrlButtonView = findViewById(R.id.openUrlButton)
+        initLastFmViews()
+        initNYTViews()
+        initWikipediaViews()
+    }
+
+    private fun initLastFmViews(){
+        imageViewLastFm = findViewById(R.id.imageView)
+        artistInfoTextViewLastFm = findViewById(R.id.artistInfoTextView)
+        openUrlButtonViewLastFm = findViewById(R.id.openUrlButton)
+    }
+
+    private fun initNYTViews(){
+        imageViewNYT = findViewById(R.id.imageView)
+        artistInfoTextViewNYT = findViewById(R.id.artistInfoTextView)
+        openUrlButtonViewNYT = findViewById(R.id.openUrlButton)
+    }
+
+    private fun initWikipediaViews(){
+        imageViewWikipedia = findViewById(R.id.imageView)
+        artistInfoTextViewWikipedia = findViewById(R.id.artistInfoTextView)
+        openUrlButtonViewWikipedia = findViewById(R.id.openUrlButton)
     }
 
     private fun initDependencyInjector(){
@@ -55,8 +80,52 @@ class OtherInfoView : AppCompatActivity() {
 
     private fun updateUiState(uiState: OtherInfoUiState){
         this.uiState = uiState
-        setUrlButton(this.uiState.CardsUiState.first().artistUrl)
-        updateViewInfo(this.uiState.CardsUiState.first().artistInfoHTML)
+        this.uiState.cardsUiState.forEach {
+            setUrlButton(it.artistUrl, it.source)
+            updateViewInfo(it.artistInfoHTML, it.source, it.imageUrl)
+        }
+    }
+
+    private fun setUrlButton(artistUrl: String, source: String) {
+        when(source){
+            "lastFm" -> openUrlButtonViewLastFm.setOnClickListener {
+                            startActivityOnClick(artistUrl)
+                        }
+            "Wikipedia" -> openUrlButtonViewWikipedia.setOnClickListener {
+                             startActivityOnClick(artistUrl)
+                        }
+            "NewYorkTimes" -> openUrlButtonViewNYT.setOnClickListener {
+                                startActivityOnClick(artistUrl)
+                            }
+        }
+    }
+
+    private fun updateViewInfo(artistInfo: String, source: String, logo: String) {
+        when(source){
+            "lastFm" -> runOnUiThread {
+                            loadLastFMLogo(logo, source)
+                            artistInfoTextViewLastFm.text = Html.fromHtml(artistInfo)
+                        }
+            "Wikipedia" -> runOnUiThread {
+                                loadLastFMLogo(logo, source)
+                                artistInfoTextViewWikipedia.text = Html.fromHtml(artistInfo)
+                            }
+            "NewYorkTimes" -> runOnUiThread {
+                                    loadLastFMLogo(logo, source)
+                                    artistInfoTextViewNYT.text = Html.fromHtml(artistInfo)
+                                }
+
+        }
+    }
+
+    private fun loadLastFMLogo(logo: String, source: String) {
+        when(source){
+            "lastFm" -> Picasso.get().load(logo).into(imageViewLastFm)
+
+            "Wikipedia" -> Picasso.get().load(logo).into(imageViewWikipedia)
+
+            "NewYorkTimes" -> Picasso.get().load(logo).into(imageViewNYT)
+        }
     }
 
     private fun updateArtistInfoView() {
@@ -72,27 +141,10 @@ class OtherInfoView : AppCompatActivity() {
         otherInfoPresenter.searchArtistBiography(artistName)
     }
 
-    private fun setUrlButton(artistUrl: String) {
-        openUrlButtonView.setOnClickListener {
-            startActivityOnClick(artistUrl)
-        }
-    }
-
     private fun startActivityOnClick(artistUrl: String){
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(artistUrl)
         startActivity(intent)
-    }
-
-    private fun updateViewInfo(artistInfo: String) {
-        runOnUiThread {
-            loadLastFMLogo()
-            artistInfoTextView.text = Html.fromHtml(artistInfo)
-        }
-    }
-
-    private fun loadLastFMLogo() {
-        Picasso.get().load(URL_LAST_FM_IMAGE).into(lastFmImageView)
     }
 
     companion object {

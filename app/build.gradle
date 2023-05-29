@@ -45,6 +45,8 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
 
     implementation project(':LastFM_API')
+    implementation project(':NYTExternal')
+    implementation project(':WikipediaExternal')
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation "io.mockk:mockk:1.12.3"

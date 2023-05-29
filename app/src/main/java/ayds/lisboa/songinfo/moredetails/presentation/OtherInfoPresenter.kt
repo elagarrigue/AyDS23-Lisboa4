@@ -4,7 +4,6 @@ import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
 import ayds.observer.Observable
 import ayds.observer.Subject
-import lisboa4LastFM.ArtistBiography.Companion.URL_LAST_FM_IMAGE as LOGO
 
 private const val PREFIX = "[*]"
 private const val DEFAULT_STRING = ""
@@ -44,7 +43,7 @@ internal class OtherInfoPresenterImpl (
                 it,
                 artistName
             )
-            uiState.CardsUiState.add(cardUiSate)
+            uiState.cardsUiState.add(cardUiSate)
         }
 
         uiStateObservable.notify(uiState)
@@ -71,7 +70,7 @@ internal class OtherInfoPresenterImpl (
 
     private fun updateNoResultsUiState() {
         val emptyUiState = OtherInfoUiState()
-        emptyUiState.CardsUiState.add(CardUiState())
+        emptyUiState.cardsUiState.add(CardUiState())
         uiStateObservable.notify(emptyUiState)
     }
 
