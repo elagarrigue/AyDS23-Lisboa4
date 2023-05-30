@@ -50,21 +50,21 @@ class OtherInfoView : AppCompatActivity() {
     }
 
     private fun initLastFmViews(){
-        imageViewLastFm = findViewById(R.id.imageView)
-        artistInfoTextViewLastFm = findViewById(R.id.artistInfoTextView)
-        openUrlButtonViewLastFm = findViewById(R.id.openUrlButton)
+        imageViewLastFm = findViewById(R.id.imageViewLastFm)
+        artistInfoTextViewLastFm = findViewById(R.id.artistInfoTextViewLastFm)
+        openUrlButtonViewLastFm = findViewById(R.id.openUrlButtonLastFm)
     }
 
     private fun initNYTViews(){
-        imageViewNYT = findViewById(R.id.imageView)
-        artistInfoTextViewNYT = findViewById(R.id.artistInfoTextView)
-        openUrlButtonViewNYT = findViewById(R.id.openUrlButton)
+        imageViewNYT = findViewById(R.id.imageViewNY)
+        artistInfoTextViewNYT = findViewById(R.id.artistInfoTextViewNY)
+        openUrlButtonViewNYT = findViewById(R.id.openUrlButtonNY)
     }
 
     private fun initWikipediaViews(){
-        imageViewWikipedia = findViewById(R.id.imageView)
-        artistInfoTextViewWikipedia = findViewById(R.id.artistInfoTextView)
-        openUrlButtonViewWikipedia = findViewById(R.id.openUrlButton)
+        imageViewWikipedia = findViewById(R.id.imageViewWiki)
+        artistInfoTextViewWikipedia = findViewById(R.id.artistInfoTextViewWiki)
+        openUrlButtonViewWikipedia = findViewById(R.id.openUrlButtonWiki)
     }
 
     private fun initDependencyInjector(){
