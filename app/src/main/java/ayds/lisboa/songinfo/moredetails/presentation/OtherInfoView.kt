@@ -10,11 +10,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ayds.lisboa.songinfo.R
 import ayds.lisboa.songinfo.moredetails.dependencyInjector.DependencyInjector
-import ayds.lisboa.songinfo.moredetails.domain.entities.Source
 import com.squareup.picasso.Picasso
 
 class OtherInfoView : AppCompatActivity() {
-    private var uiState = OtherInfoUiState(mutableListOf<CardUiState>())
+    private var uiState = OtherInfoUiState(mutableListOf())
     private lateinit var otherInfoPresenter: OtherInfoPresenter
 
     private lateinit var artistName: String
@@ -45,34 +44,42 @@ class OtherInfoView : AppCompatActivity() {
     }
 
     private fun initViews() {
-        initLastFmViews()
-        initWikipediaViews()
-        initNYTViews()
+        initCard1View()
+        initCard2View()
+        initCard3View()
     }
 
-    private fun initLastFmViews(){
+    private fun initCard1View(){
         imageView1 = findViewById(R.id.imageView1)
         artistInfoTextView1 = findViewById(R.id.artistInfoTextView1)
         openUrlButtonView1 = findViewById(R.id.openUrlButtonView1)
+        imageView1.visibility = View.GONE
+        artistInfoTextView1.visibility = View.GONE
+        openUrlButtonView1.visibility = View.GONE
     }
 
-    private fun initWikipediaViews(){
+    private fun initCard2View(){
         imageView2 = findViewById(R.id.imageView2)
         artistInfoTextView2 = findViewById(R.id.artistInfoTextView2)
         openUrlButtonView2 = findViewById(R.id.openUrlButtonView2)
+        imageView2.visibility = View.GONE
+        artistInfoTextView2.visibility = View.GONE
+        openUrlButtonView2.visibility = View.GONE
     }
 
-    private fun initNYTViews(){
+    private fun initCard3View(){
         imageView3 = findViewById(R.id.imageView3)
         artistInfoTextView3 = findViewById(R.id.artistInfoTextView3)
         openUrlButtonView3 = findViewById(R.id.openUrlButtonView3)
+        imageView3.visibility = View.GONE
+        artistInfoTextView3.visibility = View.GONE
+        openUrlButtonView3.visibility = View.GONE
     }
 
     private fun initDependencyInjector(){
         DependencyInjector.init(this)
         otherInfoPresenter = DependencyInjector.getPresenter()
     }
-
 
     private fun initObservers() {
         otherInfoPresenter.uiStateObservable
@@ -81,11 +88,12 @@ class OtherInfoView : AppCompatActivity() {
 
     private fun updateUiState(uiState: OtherInfoUiState){
         this.uiState = uiState
-        var cont: Int = 1
+        var cont = 1
         if(this.uiState.cardsUiState.isEmpty()){
             showNoResult()
         }else {
             this.uiState.cardsUiState.forEach {
+                setCardVisible(cont)
                 setUrlButton(it.artistUrl, cont)
                 updateViewInfo(it.artistInfoHTML, cont, it.imageUrl)
                 cont++
@@ -93,8 +101,31 @@ class OtherInfoView : AppCompatActivity() {
         }
     }
 
+    private fun setCardVisible(cont: Int) {
+        when(cont){
+            1 -> runOnUiThread {
+                imageView1.visibility = View.VISIBLE
+                artistInfoTextView1.visibility = View.VISIBLE
+                openUrlButtonView1.visibility = View.VISIBLE
+            }
+            2 -> runOnUiThread {
+                imageView2.visibility = View.VISIBLE
+                artistInfoTextView2.visibility = View.VISIBLE
+                openUrlButtonView2.visibility = View.VISIBLE
+            }
+            3 ->  runOnUiThread {
+                imageView3.visibility = View.VISIBLE
+                artistInfoTextView3.visibility = View.VISIBLE
+                openUrlButtonView3.visibility = View.VISIBLE
+            }
+        }
+    }
+
     private fun showNoResult() {
-        artistInfoTextView1.text = Html.fromHtml("<h1>No Results</h1>")
+        runOnUiThread {
+            artistInfoTextView1.visibility = View.VISIBLE
+            artistInfoTextView1.text = "No Results"
+        }
     }
 
     private fun setUrlButton(artistUrl: String, cont: Int) {
