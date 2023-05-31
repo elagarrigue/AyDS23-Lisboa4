@@ -26,26 +26,25 @@ internal class OtherInfoPresenterImpl (
     }
 
      private fun searchArtistInfo(artistName: String) {
-        val cards = biographyRepository.getArtistBiography(artistName)
-
-         when(cards.isEmpty())
-         {
-            false -> updateUiState(cards, artistName)
-            true -> updateNoResultsUiState()
+         val cards = biographyRepository.getArtistBiography(artistName)
+         if(cards.isEmpty())
+             updateNoResultsUiState()
+         else {
+             updateUiState(cards, artistName)
          }
     }
 
     private fun updateUiState(cards: MutableCollection<Card>, artistName: String) {
-        var uiState = OtherInfoUiState()
+        var cardsUiState: MutableCollection<CardUiState> = mutableListOf()
         cards.forEach()
         {
             val cardUiSate = createCardUiState(
                 it,
                 artistName
             )
-            uiState.cardsUiState.add(cardUiSate)
+            cardsUiState.add(cardUiSate)
         }
-
+        var uiState = OtherInfoUiState(cardsUiState)
         uiStateObservable.notify(uiState)
     }
 
@@ -69,7 +68,8 @@ internal class OtherInfoPresenterImpl (
     }
 
     private fun updateNoResultsUiState() {
-        val emptyUiState = OtherInfoUiState()
+        var cardsUiState: MutableCollection<CardUiState> = mutableListOf()
+        val emptyUiState = OtherInfoUiState(cardsUiState)
         emptyUiState.cardsUiState.add(CardUiState())
         uiStateObservable.notify(emptyUiState)
     }

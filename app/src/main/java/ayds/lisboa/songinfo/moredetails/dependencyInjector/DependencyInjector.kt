@@ -3,7 +3,6 @@ package ayds.lisboa.songinfo.moredetails.dependencyInjector
 import android.content.Context
 import ayds.NY1.NewYorkTimes.external.DependenciesInjector
 import ayds.NY1.NewYorkTimes.external.NYTArtistInfoService
-import ayds.NY1.NewYorkTimes.external.info.NYTArtistInfoServiceImpl
 import ayds.lisboa.songinfo.moredetails.data.BiographyRepositoryImpl
 import ayds.lisboa.songinfo.moredetails.data.external.Broker
 import ayds.lisboa.songinfo.moredetails.data.external.BrokerImp
@@ -12,8 +11,8 @@ import ayds.lisboa.songinfo.moredetails.data.external.proxys.NewYorkTimesProxy
 import ayds.lisboa.songinfo.moredetails.data.external.proxys.Proxy
 import ayds.lisboa.songinfo.moredetails.data.external.proxys.WikipediaProxy
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.CursorToCardMapperImpl
-import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorage
-import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorageImpl
+import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LocalStorage
+import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
 import ayds.lisboa.songinfo.moredetails.presentation.*
 import lisboa4LastFM.*
@@ -24,7 +23,7 @@ object DependencyInjector {
 
     private lateinit var otherInfoView: OtherInfoView
     private lateinit var otherInfoPresenter: OtherInfoPresenter
-    private lateinit var lastFMLocalStorage: LastFMLocalStorage
+    private lateinit var localStorage: LocalStorage
     private lateinit var lastFmService: LastFMService
     private lateinit var wikipediaService: WikipediaArticleService
     private lateinit var newYorkTimesService: NYTArtistInfoService
@@ -48,7 +47,7 @@ object DependencyInjector {
 
     private fun createLastFmLocalStorage() {
         val cursorToArtistMapper = CursorToCardMapperImpl()
-        lastFMLocalStorage = LastFMLocalStorageImpl(otherInfoView as Context, cursorToArtistMapper)
+        localStorage = LocalStorageImpl(otherInfoView as Context, cursorToArtistMapper)
     }
 
     private fun getExternalServices() {
@@ -87,7 +86,7 @@ object DependencyInjector {
     }
 
     private fun createBiographyRepository() {
-        biographyRepository = BiographyRepositoryImpl(lastFMLocalStorage, broker)
+        biographyRepository = BiographyRepositoryImpl(localStorage, broker)
     }
 
     private fun createOtherInfoPresenter() {

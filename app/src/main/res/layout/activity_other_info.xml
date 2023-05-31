@@ -4,150 +4,156 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-	<ScrollView
-		android:id="@+id/imageView"
-		android:layout_width="0dp"
-		android:layout_height="0dp"
-		android:layout_margin="16dp"
-		app:layout_constraintLeft_toLeftOf="parent"
-		app:layout_constraintRight_toRightOf="parent"
-		app:layout_constraintTop_toTopOf="parent"
-		app:layout_constraintVertical_chainStyle="spread_inside"
-		>
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
-		<ImageView
-			android:id="@+id/imageViewLastFm"
-			android:layout_width="0dp"
-			android:layout_height="0dp"
-			android:layout_margin="16dp"
-			app:layout_constraintBottom_toTopOf="@id/scrollViewLastFm"
-			app:layout_constraintLeft_toLeftOf="parent"
-			app:layout_constraintRight_toRightOf="parent"
-			app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintVertical_chainStyle="spread_inside"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-		<ScrollView
-			android:id="@+id/scrollViewLastFm"
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			app:layout_constraintBottom_toTopOf="@id/openUrlButtonLastFm"
-			app:layout_constraintLeft_toLeftOf="parent"
-			app:layout_constraintRight_toRightOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/imageViewLastFm"
-			>
+            <ImageView
+                android:id="@+id/imageViewLastFm"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_gravity="center"
+                android:layout_margin="16dp"
+                app:layout_constraintBottom_toTopOf="@id/artistInfoTextViewLastFm"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="parent"
+                app:layout_constraintVertical_chainStyle="spread_inside" />
 
-			<TextView
-				android:id="@+id/artistInfoTextViewLastFm"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:padding="16dp"
-				android:autoLink="web"
-				android:linksClickable="true"
-				/>
-		</ScrollView>
+            <TextView
+                android:id="@+id/artistInfoTextViewLastFm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:autoLink="web"
+                android:linksClickable="true"
+                android:padding="16dp" />
 
-		<Button
-			android:id="@+id/openUrlButtonLastFm"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_margin="16dp"
-			android:text="View Full Article"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/scrollViewLastFm" />
+            <TextView
+                android:id="@+id/textViewLastFm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="-LastFM-"
+                app:layout_constraintBottom_toTopOf="@id/openUrlButtonViewLastFm"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageViewLastFm" />
 
-
-		<ImageView
-			android:id="@+id/imageViewWiki"
-			android:layout_width="0dp"
-			android:layout_height="0dp"
-			android:layout_margin="16dp"
-			app:layout_constraintBottom_toTopOf="@id/scrollViewWiki"
-			app:layout_constraintLeft_toLeftOf="parent"
-			app:layout_constraintRight_toRightOf="parent"
-			app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintVertical_chainStyle="spread_inside"/>
-
-		<ScrollView
-			android:id="@+id/scrollViewWiki"
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			app:layout_constraintBottom_toTopOf="@id/openUrlButtonWiki"
-			app:layout_constraintLeft_toLeftOf="parent"
-			app:layout_constraintRight_toRightOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/imageViewWiki"
-			>
-
-			<TextView
-				android:id="@+id/artistInfoTextViewWiki"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:padding="16dp"
-				android:autoLink="web"
-				android:linksClickable="true"
-				/>
-		</ScrollView>
-
-		<Button
-			android:id="@+id/openUrlButtonWiki"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_margin="16dp"
-			android:text="View Full Article"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/scrollViewWiki" />
+            <Button
+                android:id="@+id/openUrlButtonViewLastFm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="16dp"
+                android:text="View Full Article"
+                app:layout_constraintBottom_toTopOf="@id/imageViewWikipedia"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewLastFm" />
 
 
-		<ImageView
-			android:id="@+id/imageViewNY"
-			android:layout_width="0dp"
-			android:layout_height="0dp"
-			android:layout_margin="16dp"
-			app:layout_constraintBottom_toTopOf="@id/scrollViewNY"
-			app:layout_constraintLeft_toLeftOf="parent"
-			app:layout_constraintRight_toRightOf="parent"
-			app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintVertical_chainStyle="spread_inside"/>
+            <ImageView
+                android:id="@+id/imageViewWikipedia"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_gravity="center"
+                android:layout_margin="16dp"
+                app:layout_constraintBottom_toTopOf="@id/artistInfoTextViewWikipedia"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/openUrlButtonViewLastFm"
+                app:layout_constraintVertical_chainStyle="spread_inside" />
 
-		<ScrollView
-			android:id="@+id/scrollViewNY"
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			app:layout_constraintBottom_toTopOf="@id/openUrlButtonNY"
-			app:layout_constraintLeft_toLeftOf="parent"
-			app:layout_constraintRight_toRightOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/imageViewNY"
-			>
+            <TextView
+                android:id="@+id/artistInfoTextViewWikipedia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:autoLink="web"
+                android:linksClickable="true"
+                android:padding="16dp" />
 
-			<TextView
-				android:id="@+id/artistInfoTextViewNY"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:padding="16dp"
-				android:autoLink="web"
-				android:linksClickable="true"
-				/>
-		</ScrollView>
+            <TextView
+                android:id="@+id/textViewWikipedia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="-Wikipedia-"
+                app:layout_constraintBottom_toTopOf="@id/openUrlButtonViewWikipedia"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/artistInfoTextViewWikipedia" />
 
-		<Button
-			android:id="@+id/openUrlButtonNY"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_margin="16dp"
-			android:text="View Full Article"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/scrollViewNY" />
-
-	</ScrollView>
-
-
+            <Button
+                android:id="@+id/openUrlButtonViewWikipedia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="16dp"
+                android:text="View Full Article"
+                app:layout_constraintBottom_toTopOf="@id/imageViewNYT"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewWikipedia" />
 
 
+            <ImageView
+                android:id="@+id/imageViewNYT"
+                android:layout_width="match_parent"
+                android:layout_height="61dp"
+                android:layout_gravity="center"
+                android:layout_margin="16dp"
+                app:layout_constraintBottom_toTopOf="@id/artistInfoTextViewNYT"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/openUrlButtonViewWikipedia"
+                app:layout_constraintVertical_chainStyle="spread_inside" />
 
+            <TextView
+                android:id="@+id/artistInfoTextViewNYT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:autoLink="web"
+                android:linksClickable="true"
+                android:padding="16dp" />
 
+            <TextView
+                android:id="@+id/textViewNYT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="-New York Times-"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/artistInfoTextViewNYT" />
+
+            <Button
+                android:id="@+id/openUrlButtonViewNYT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="16dp"
+                android:text="View Full Article"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewNYT" />
+
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

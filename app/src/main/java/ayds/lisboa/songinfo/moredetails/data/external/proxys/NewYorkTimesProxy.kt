@@ -11,12 +11,10 @@ class NewYorkTimesProxy(
 ): Proxy {
     override fun getArtistBiography(artistName: String): Card? {
         var card: Card? = null
-        var newYorkTimesArtistInfo: ArtistInformationExternal? = null
-        try{
-            newYorkTimesArtistInfo = newYorkTimesService.getArtistInfo(artistName)
+        var newYorkTimesArtistInfo: ArtistInformationExternal? = try{
+            newYorkTimesService.getArtistInfo(artistName)
         }catch (e: Exception){
-            e.printStackTrace()
-            newYorkTimesArtistInfo = null
+            null
         }
         if (newYorkTimesArtistInfo != null)
         {
@@ -30,7 +28,6 @@ class NewYorkTimesProxy(
                 )
             }
         }
-
         return card
     }
 }

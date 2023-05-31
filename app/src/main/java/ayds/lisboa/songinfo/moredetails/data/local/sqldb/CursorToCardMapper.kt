@@ -13,7 +13,7 @@ internal class CursorToCardMapperImpl : CursorToCardMapper {
         var cards = mutableListOf<Card>()
         try {
             with(cursor) {
-                if (moveToNext()) {
+                while(moveToNext()) {
                     cards.add(Card(
                             getString(getColumnIndexOrThrow(INFO_COLUMN)),
                             getString(getColumnIndexOrThrow(URL_COLUMN)),
@@ -21,8 +21,6 @@ internal class CursorToCardMapperImpl : CursorToCardMapper {
                             getString(getColumnIndexOrThrow(LOGO_URL_COLUMN)),
                         true)
                     )
-                } else {
-                    null
                 }
             }
         } catch (e: java.sql.SQLException) {
