@@ -86,7 +86,6 @@ class OtherInfoView : AppCompatActivity() {
             showNoResult()
         }else {
             this.uiState.cardsUiState.forEach {
-                setCardVisible(cont)
                 setUrlButton(it.artistUrl, cont)
                 updateViewInfo(it.artistInfoHTML, cont, it.imageUrl)
                 cont++
@@ -94,28 +93,7 @@ class OtherInfoView : AppCompatActivity() {
         }
     }
 
-    private fun setCardVisible(cont: Int) {
-        when(cont){
-            1 -> {
-                artistInfoTextView1.visibility = View.VISIBLE
-                openUrlButtonView1.visibility = View.VISIBLE
-                imageView1.visibility = View.VISIBLE
-            }
-            2 -> {
-                artistInfoTextView2.visibility = View.VISIBLE
-                openUrlButtonView2.visibility = View.VISIBLE
-                imageView2.visibility = View.VISIBLE
-            }
-            3 -> {
-                artistInfoTextView3.visibility = View.VISIBLE
-                openUrlButtonView3.visibility = View.VISIBLE
-                imageView3.visibility = View.VISIBLE
-            }
-        }
-    }
-
     private fun showNoResult() {
-        artistInfoTextView1.visibility = View.VISIBLE
         artistInfoTextView1.text = Html.fromHtml("<h1>No Results</h1>")
     }
 

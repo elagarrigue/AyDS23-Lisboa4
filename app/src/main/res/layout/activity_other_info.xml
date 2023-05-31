@@ -27,7 +27,6 @@
                 android:layout_height="54dp"
                 android:layout_gravity="center"
                 android:layout_margin="16dp"
-                android:visibility="invisible"
                 app:layout_constraintBottom_toTopOf="@id/artistInfoTextView1"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -41,8 +40,7 @@
                 android:layout_gravity="center"
                 android:autoLink="web"
                 android:linksClickable="true"
-                android:padding="16dp"
-                android:visibility="invisible" />
+                android:padding="16dp" />
 
             <Button
                 android:id="@+id/openUrlButtonView1"
@@ -51,7 +49,6 @@
                 android:layout_gravity="center"
                 android:layout_margin="16dp"
                 android:text="View Full Article"
-                android:visibility="invisible"
                 app:layout_constraintBottom_toTopOf="@id/imageView2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -63,7 +60,6 @@
                 android:layout_height="54dp"
                 android:layout_gravity="center"
                 android:layout_margin="16dp"
-                android:visibility="invisible"
                 app:layout_constraintBottom_toTopOf="@id/artistInfoTextView2"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -77,8 +73,7 @@
                 android:layout_gravity="center"
                 android:autoLink="web"
                 android:linksClickable="true"
-                android:padding="16dp"
-                android:visibility="invisible" />
+                android:padding="16dp" />
 
             <Button
                 android:id="@+id/openUrlButtonView2"
@@ -87,7 +82,6 @@
                 android:layout_gravity="center"
                 android:layout_margin="16dp"
                 android:text="View Full Article"
-                android:visibility="invisible"
                 app:layout_constraintBottom_toTopOf="@id/imageView3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -99,7 +93,6 @@
                 android:layout_height="61dp"
                 android:layout_gravity="center"
                 android:layout_margin="16dp"
-                android:visibility="invisible"
                 app:layout_constraintBottom_toTopOf="@id/artistInfoTextView3"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -113,8 +106,7 @@
                 android:layout_gravity="center"
                 android:autoLink="web"
                 android:linksClickable="true"
-                android:padding="16dp"
-                android:visibility="invisible" />
+                android:padding="16dp" />
 
             <Button
                 android:id="@+id/openUrlButtonView3"
@@ -123,7 +115,6 @@
                 android:layout_gravity="center"
                 android:layout_margin="16dp"
                 android:text="View Full Article"
-                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />

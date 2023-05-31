@@ -55,3 +55,4 @@ internal class LocalStorageImpl(
         return cursorToCardMapper.map(cursor)
     }
 }
+
