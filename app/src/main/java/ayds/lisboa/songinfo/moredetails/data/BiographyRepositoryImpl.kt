@@ -9,24 +9,19 @@ class BiographyRepositoryImpl(
     private val broker: Broker
 ): BiographyRepository {
 
-    override fun getArtistBiography(artistName: String): MutableCollection<Card> {
+    override fun getArtistBiography(artistName: String): List<Card> {
         var cards = localStorage.getArtistCards(artistName)
         if (cards.isEmpty()) {
-            try {
-                cards = broker.getCards(artistName)
-                if (cards.isNotEmpty())
-                {
-                    saveAllCards(artistName, cards)
-                }
-            }
-            catch (e: Exception) {
-
+            cards = broker.getCards(artistName)
+            if (cards.isNotEmpty()) {
+                saveAllCards(artistName, cards)
             }
         }
+
         return cards
     }
 
-    private fun saveAllCards(artistName: String, cards: MutableCollection<Card>)
+    private fun saveAllCards(artistName: String, cards: List<Card>)
     {
         cards.forEach{
             localStorage.saveArtistCard(artistName, it)

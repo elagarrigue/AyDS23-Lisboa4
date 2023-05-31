@@ -27,13 +27,14 @@ object DependencyInjector {
     private lateinit var lastFmService: LastFMService
     private lateinit var wikipediaService: WikipediaArticleService
     private lateinit var newYorkTimesService: NYTArtistInfoService
-    private lateinit var proxyCollection: MutableCollection<Proxy>
+    private lateinit var proxyCollection: MutableList<Proxy>
     private lateinit var broker: Broker
     private lateinit var biographyRepository: BiographyRepository
     private lateinit var otherInfoHtmlHelper: OtherInfoHtmlHelper
+    private lateinit var otherInfoSourceEnumHelper: SourceEnumHelper
     fun init(otherInfoView: OtherInfoView){
         setOtherInfoView(otherInfoView)
-        createLastFmLocalStorage()
+        createLocalStorage()
         getExternalServices()
         createProxyCollection()
         createBroker()
@@ -45,7 +46,7 @@ object DependencyInjector {
         this.otherInfoView = otherInfoView
     }
 
-    private fun createLastFmLocalStorage() {
+    private fun createLocalStorage() {
         val cursorToArtistMapper = CursorToCardMapperImpl()
         localStorage = LocalStorageImpl(otherInfoView as Context, cursorToArtistMapper)
     }
@@ -69,7 +70,7 @@ object DependencyInjector {
     }
 
     private fun createProxyCollection() {
-        proxyCollection = mutableListOf()
+        proxyCollection = mutableListOf<Proxy>()
 
         val lastFmProxy: Proxy = LastFmProxy(lastFmService)
         proxyCollection.add(lastFmProxy)
@@ -91,7 +92,8 @@ object DependencyInjector {
 
     private fun createOtherInfoPresenter() {
         otherInfoHtmlHelper = OtherInfoHtmlHelperImpl()
-        otherInfoPresenter = OtherInfoPresenterImpl(biographyRepository, otherInfoHtmlHelper)
+        otherInfoSourceEnumHelper = SourceEnumHelperImpl()
+        otherInfoPresenter = OtherInfoPresenterImpl(biographyRepository, otherInfoHtmlHelper, otherInfoSourceEnumHelper)
     }
 
     fun getPresenter(): OtherInfoPresenter {

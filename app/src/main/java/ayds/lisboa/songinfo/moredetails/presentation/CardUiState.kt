@@ -7,5 +7,5 @@ data class CardUiState (
     val artistInfoHTML: String = DEFAULT_STRING,
     val artistUrl: String = DEFAULT_STRING,
     val imageUrl: String = LOGO,
-    val source: String = "xd"
+    val source: String = DEFAULT_STRING
 )

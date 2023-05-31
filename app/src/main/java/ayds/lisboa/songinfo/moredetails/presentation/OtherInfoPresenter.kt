@@ -15,7 +15,8 @@ interface OtherInfoPresenter {
 }
 internal class OtherInfoPresenterImpl (
     private val biographyRepository: BiographyRepository,
-    private val otherInfoHtmlHelper: OtherInfoHtmlHelper
+    private val otherInfoHtmlHelper: OtherInfoHtmlHelper,
+    private val sourceEnumHelper: SourceEnumHelper
 ) : OtherInfoPresenter {
 
     override val uiStateObservable = Subject<OtherInfoUiState>()
@@ -34,8 +35,8 @@ internal class OtherInfoPresenterImpl (
          }
     }
 
-    private fun updateUiState(cards: MutableCollection<Card>, artistName: String) {
-        var cardsUiState: MutableCollection<CardUiState> = mutableListOf()
+    private fun updateUiState(cards: List<Card>, artistName: String) {
+        var cardsUiState = mutableListOf<CardUiState>()
         cards.forEach()
         {
             val cardUiSate = createCardUiState(
@@ -55,7 +56,7 @@ internal class OtherInfoPresenterImpl (
             htmlArtistInfo,
             card.infoUrl,
             card.sourceLogoUrl,
-            card.source
+            sourceEnumHelper.sourceEnumToString(card.source)
         )
     }
     private fun getFormattedArtistInfo(card: Card): String {
@@ -68,9 +69,8 @@ internal class OtherInfoPresenterImpl (
     }
 
     private fun updateNoResultsUiState() {
-        var cardsUiState: MutableCollection<CardUiState> = mutableListOf()
+        var cardsUiState = mutableListOf<CardUiState>()
         val emptyUiState = OtherInfoUiState(cardsUiState)
-        emptyUiState.cardsUiState.add(CardUiState())
         uiStateObservable.notify(emptyUiState)
     }
 

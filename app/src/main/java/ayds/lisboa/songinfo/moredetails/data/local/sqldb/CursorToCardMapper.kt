@@ -2,14 +2,15 @@ package ayds.lisboa.songinfo.moredetails.data.local.sqldb
 
 import android.database.Cursor
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
+import ayds.lisboa.songinfo.moredetails.domain.entities.Source
 
 interface CursorToCardMapper {
-    fun map(cursor: Cursor): MutableCollection<Card>
+    fun map(cursor: Cursor): List<Card>
 }
 
 internal class CursorToCardMapperImpl : CursorToCardMapper {
 
-    override fun map(cursor: Cursor): MutableCollection<Card> {
+    override fun map(cursor: Cursor): List<Card> {
         var cards = mutableListOf<Card>()
         try {
             with(cursor) {
@@ -17,7 +18,7 @@ internal class CursorToCardMapperImpl : CursorToCardMapper {
                     cards.add(Card(
                             getString(getColumnIndexOrThrow(INFO_COLUMN)),
                             getString(getColumnIndexOrThrow(URL_COLUMN)),
-                            getString(getColumnIndexOrThrow(SOURCE_COLUMN)),
+                            Source.values()[getInt(getColumnIndexOrThrow(SOURCE_COLUMN))],
                             getString(getColumnIndexOrThrow(LOGO_URL_COLUMN)),
                         true)
                     )

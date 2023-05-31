@@ -1,5 +1,5 @@
 package ayds.lisboa.songinfo.moredetails.presentation;
 
 data class OtherInfoUiState (
-    var cardsUiState: MutableCollection<CardUiState>
+    var cardsUiState: List<CardUiState>
     )

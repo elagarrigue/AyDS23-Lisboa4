@@ -1,10 +1,11 @@
 package ayds.lisboa.songinfo.moredetails.data.external.proxys
 
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
+import ayds.lisboa.songinfo.moredetails.domain.entities.Source
 import lisboa4LastFM.ArtistBiography
 import lisboa4LastFM.LastFMService
 
-class LastFmProxy(
+internal class LastFmProxy(
     private val lastFMService: LastFMService
 ): Proxy {
     override fun getArtistBiography(artistName: String): Card? {
@@ -15,7 +16,7 @@ class LastFmProxy(
             card = Card(
                 lastFmBiography.artistInfo,
                 lastFmBiography.url,
-                "LastFm",
+                Source.LastFm,
                 ArtistBiography.URL_LAST_FM_IMAGE,
                 lastFmBiography.isLocallyStored
             )

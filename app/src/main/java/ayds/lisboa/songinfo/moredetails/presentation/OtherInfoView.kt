@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ayds.lisboa.songinfo.R
 import ayds.lisboa.songinfo.moredetails.dependencyInjector.DependencyInjector
+import ayds.lisboa.songinfo.moredetails.domain.entities.Source
 import com.squareup.picasso.Picasso
 
 class OtherInfoView : AppCompatActivity() {
@@ -18,17 +19,17 @@ class OtherInfoView : AppCompatActivity() {
 
     private lateinit var artistName: String
 
-    private lateinit var artistInfoTextViewLastFm: TextView
-    private lateinit var openUrlButtonViewLastFm: View
-    private lateinit var imageViewLastFm: ImageView
+    private lateinit var artistInfoTextView1: TextView
+    private lateinit var openUrlButtonView1: View
+    private lateinit var imageView1: ImageView
 
-    private lateinit var artistInfoTextViewNYT: TextView
-    private lateinit var openUrlButtonViewNYT: View
-    private lateinit var imageViewNYT: ImageView
+    private lateinit var artistInfoTextView2: TextView
+    private lateinit var openUrlButtonView2: View
+    private lateinit var imageView2: ImageView
 
-    private lateinit var artistInfoTextViewWikipedia: TextView
-    private lateinit var openUrlButtonViewWikipedia: View
-    private lateinit var imageViewWikipedia: ImageView
+    private lateinit var artistInfoTextView3: TextView
+    private lateinit var openUrlButtonView3: View
+    private lateinit var imageView3: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,21 +51,21 @@ class OtherInfoView : AppCompatActivity() {
     }
 
     private fun initLastFmViews(){
-        imageViewLastFm = findViewById(R.id.imageViewLastFm)
-        artistInfoTextViewLastFm = findViewById(R.id.artistInfoTextViewLastFm)
-        openUrlButtonViewLastFm = findViewById(R.id.openUrlButtonViewLastFm)
+        imageView1 = findViewById(R.id.imageView1)
+        artistInfoTextView1 = findViewById(R.id.artistInfoTextView1)
+        openUrlButtonView1 = findViewById(R.id.openUrlButtonView1)
     }
 
     private fun initWikipediaViews(){
-        imageViewWikipedia = findViewById(R.id.imageViewWikipedia)
-        artistInfoTextViewWikipedia = findViewById(R.id.artistInfoTextViewWikipedia)
-        openUrlButtonViewWikipedia = findViewById(R.id.openUrlButtonViewWikipedia)
+        imageView2 = findViewById(R.id.imageView2)
+        artistInfoTextView2 = findViewById(R.id.artistInfoTextView2)
+        openUrlButtonView2 = findViewById(R.id.openUrlButtonView2)
     }
 
     private fun initNYTViews(){
-        imageViewNYT = findViewById(R.id.imageViewNYT)
-        artistInfoTextViewNYT = findViewById(R.id.artistInfoTextViewNYT)
-        openUrlButtonViewNYT = findViewById(R.id.openUrlButtonViewNYT)
+        imageView3 = findViewById(R.id.imageView3)
+        artistInfoTextView3 = findViewById(R.id.artistInfoTextView3)
+        openUrlButtonView3 = findViewById(R.id.openUrlButtonView3)
     }
 
     private fun initDependencyInjector(){
@@ -80,51 +81,83 @@ class OtherInfoView : AppCompatActivity() {
 
     private fun updateUiState(uiState: OtherInfoUiState){
         this.uiState = uiState
-        this.uiState.cardsUiState.forEach {
-            setUrlButton(it.artistUrl, it.source)
-            updateViewInfo(it.artistInfoHTML, it.source, it.imageUrl)
+        var cont: Int = 1
+        if(this.uiState.cardsUiState.isEmpty()){
+            showNoResult()
+        }else {
+            this.uiState.cardsUiState.forEach {
+                setCardVisible(cont)
+                setUrlButton(it.artistUrl, cont)
+                updateViewInfo(it.artistInfoHTML, cont, it.imageUrl)
+                cont++
+            }
         }
     }
 
-    private fun setUrlButton(artistUrl: String, source: String) {
-        when(source){
-            "LastFm" -> openUrlButtonViewLastFm.setOnClickListener {
+    private fun setCardVisible(cont: Int) {
+        when(cont){
+            1 -> {
+                artistInfoTextView1.visibility = View.VISIBLE
+                openUrlButtonView1.visibility = View.VISIBLE
+                imageView1.visibility = View.VISIBLE
+            }
+            2 -> {
+                artistInfoTextView2.visibility = View.VISIBLE
+                openUrlButtonView2.visibility = View.VISIBLE
+                imageView2.visibility = View.VISIBLE
+            }
+            3 -> {
+                artistInfoTextView3.visibility = View.VISIBLE
+                openUrlButtonView3.visibility = View.VISIBLE
+                imageView3.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun showNoResult() {
+        artistInfoTextView1.visibility = View.VISIBLE
+        artistInfoTextView1.text = Html.fromHtml("<h1>No Results</h1>")
+    }
+
+    private fun setUrlButton(artistUrl: String, cont: Int) {
+        when(cont){
+            1 -> openUrlButtonView1.setOnClickListener {
                             startActivityOnClick(artistUrl)
                         }
-            "Wikipedia" -> openUrlButtonViewWikipedia.setOnClickListener {
+            2 -> openUrlButtonView2.setOnClickListener {
                              startActivityOnClick(artistUrl)
                         }
-            "NewYorkTimes" -> openUrlButtonViewNYT.setOnClickListener {
+            3 -> openUrlButtonView3.setOnClickListener {
                                 startActivityOnClick(artistUrl)
                             }
         }
     }
 
-    private fun updateViewInfo(artistInfo: String, source: String, logo: String) {
-        when(source){
-            "LastFm" -> runOnUiThread {
-                            loadLogo(logo, source)
-                            artistInfoTextViewLastFm.text = Html.fromHtml(artistInfo)
+    private fun updateViewInfo(artistInfo: String, cont: Int, logo: String) {
+        when(cont){
+            1 -> runOnUiThread {
+                            loadLogo(logo, cont)
+                            artistInfoTextView1.text = Html.fromHtml(artistInfo)
                         }
-            "Wikipedia" -> runOnUiThread {
-                                loadLogo(logo, source)
-                                artistInfoTextViewWikipedia.text = Html.fromHtml(artistInfo)
+            2 -> runOnUiThread {
+                                loadLogo(logo, cont)
+                                artistInfoTextView2.text = Html.fromHtml(artistInfo)
                             }
-            "NewYorkTimes" -> runOnUiThread {
-                                    loadLogo(logo, source)
-                                    artistInfoTextViewNYT.text = Html.fromHtml(artistInfo)
+            3 -> runOnUiThread {
+                                    loadLogo(logo, cont)
+                                    artistInfoTextView3.text = Html.fromHtml(artistInfo)
                                 }
 
         }
     }
 
-    private fun loadLogo(logo: String, source: String) {
-        when(source){
-            "LastFm" -> Picasso.get().load(logo).into(imageViewLastFm)
+    private fun loadLogo(logo: String, cont: Int) {
+        when(cont){
+            1 -> Picasso.get().load(logo).into(imageView1)
 
-            "Wikipedia" -> Picasso.get().load(logo).into(imageViewWikipedia)
+            2 -> Picasso.get().load(logo).into(imageView2)
 
-            "NewYorkTimes" -> Picasso.get().load(logo).into(imageViewNYT)
+            3 -> Picasso.get().load(logo).into(imageView3)
         }
     }
 

@@ -15,7 +15,7 @@ const val createArtistTableQuery: String =
             "$ID_COLUMN integer PRIMARY KEY AUTOINCREMENT, " +
             "$ARTIST_COLUMN string, " +
             "$INFO_COLUMN string, " +
-            "$SOURCE_COLUMN string, " +
+            "$SOURCE_COLUMN integer, " +
             "$URL_COLUMN string, " +
             "$LOGO_URL_COLUMN string)"
 
