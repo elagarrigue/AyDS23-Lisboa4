@@ -10,7 +10,7 @@ const val NYT_IMAGE = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVi
 internal class NewYorkTimesProxy(
     private val newYorkTimesService: NYTArtistInfoService
 ): CardProxy {
-    override fun getArtistBiography(artistName: String): Card? {
+    override fun getCard(artistName: String): Card? {
         var card: Card? = null
         var newYorkTimesArtistInfo: ArtistInformationExternal? = null
         try{

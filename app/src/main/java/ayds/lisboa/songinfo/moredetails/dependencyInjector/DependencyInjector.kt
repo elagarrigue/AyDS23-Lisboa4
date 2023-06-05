@@ -4,8 +4,8 @@ import android.content.Context
 import ayds.NY1.NewYorkTimes.external.DependenciesInjector
 import ayds.NY1.NewYorkTimes.external.NYTArtistInfoService
 import ayds.lisboa.songinfo.moredetails.data.CardRepositoryImpl
-import ayds.lisboa.songinfo.moredetails.data.external.Broker
-import ayds.lisboa.songinfo.moredetails.data.external.BrokerImp
+import ayds.lisboa.songinfo.moredetails.data.external.CardsBroker
+import ayds.lisboa.songinfo.moredetails.data.external.CardsBrokerImp
 import ayds.lisboa.songinfo.moredetails.data.external.proxys.LastFmProxy
 import ayds.lisboa.songinfo.moredetails.data.external.proxys.NewYorkTimesProxy
 import ayds.lisboa.songinfo.moredetails.data.external.proxys.CardProxy
@@ -28,7 +28,7 @@ object DependencyInjector {
     private lateinit var wikipediaService: WikipediaArticleService
     private lateinit var newYorkTimesService: NYTArtistInfoService
     private lateinit var proxyCollection: MutableList<CardProxy>
-    private lateinit var broker: Broker
+    private lateinit var cardsBroker: CardsBroker
     private lateinit var biographyRepository: CardRepository
     private lateinit var otherInfoHtmlHelper: OtherInfoHtmlHelper
     private lateinit var otherInfoSourceEnumHelper: SourceEnumHelper
@@ -83,11 +83,11 @@ object DependencyInjector {
     }
 
     private fun createBroker() {
-        broker = BrokerImp(proxyCollection)
+        cardsBroker = CardsBrokerImp(proxyCollection)
     }
 
     private fun createBiographyRepository() {
-        biographyRepository = CardRepositoryImpl(localStorage, broker)
+        biographyRepository = CardRepositoryImpl(localStorage, cardsBroker)
     }
 
     private fun createOtherInfoPresenter() {

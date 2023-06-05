@@ -27,7 +27,7 @@ internal class OtherInfoPresenterImpl (
     }
 
      private fun searchArtistInfo(artistName: String) {
-         val cards = biographyRepository.getArtistBiography(artistName)
+         val cards = biographyRepository.getCards(artistName)
          if(cards.isEmpty())
              updateNoResultsUiState()
          else {

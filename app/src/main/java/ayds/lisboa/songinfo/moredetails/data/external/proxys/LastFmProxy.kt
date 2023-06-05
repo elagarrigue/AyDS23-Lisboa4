@@ -8,7 +8,7 @@ import lisboa4LastFM.LastFMService
 internal class LastFmProxy(
     private val lastFMService: LastFMService
 ): CardProxy {
-    override fun getArtistBiography(artistName: String): Card? {
+    override fun getCard(artistName: String): Card? {
         var card: Card? = null
         val lastFmBiography = lastFMService.getArtistBiography(artistName)
         if (lastFmBiography != null)

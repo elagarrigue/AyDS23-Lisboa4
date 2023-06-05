@@ -9,7 +9,7 @@ import wikipedia.external.external.entities.WikipediaArtist
 internal class WikipediaProxy(
     private val wikipediaService: WikipediaArticleService
 ): CardProxy {
-    override fun getArtistBiography(artistName: String): Card? {
+    override fun getCard(artistName: String): Card? {
         val card: Card? = try{
             val wikipediaArtist = wikipediaService.getArtist(artistName)
             wikipediaArtistToCard(wikipediaArtist)
