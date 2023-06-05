@@ -3,17 +3,17 @@ package ayds.lisboa.songinfo.moredetails.dependencyInjector
 import android.content.Context
 import ayds.NY1.NewYorkTimes.external.DependenciesInjector
 import ayds.NY1.NewYorkTimes.external.NYTArtistInfoService
-import ayds.lisboa.songinfo.moredetails.data.BiographyRepositoryImpl
+import ayds.lisboa.songinfo.moredetails.data.CardRepositoryImpl
 import ayds.lisboa.songinfo.moredetails.data.external.Broker
 import ayds.lisboa.songinfo.moredetails.data.external.BrokerImp
 import ayds.lisboa.songinfo.moredetails.data.external.proxys.LastFmProxy
 import ayds.lisboa.songinfo.moredetails.data.external.proxys.NewYorkTimesProxy
-import ayds.lisboa.songinfo.moredetails.data.external.proxys.Proxy
+import ayds.lisboa.songinfo.moredetails.data.external.proxys.CardProxy
 import ayds.lisboa.songinfo.moredetails.data.external.proxys.WikipediaProxy
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.CursorToCardMapperImpl
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LocalStorage
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LocalStorageImpl
-import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
+import ayds.lisboa.songinfo.moredetails.domain.repository.CardRepository
 import ayds.lisboa.songinfo.moredetails.presentation.*
 import lisboa4LastFM.*
 import wikipedia.external.external.WikipediaArticleService
@@ -27,9 +27,9 @@ object DependencyInjector {
     private lateinit var lastFmService: LastFMService
     private lateinit var wikipediaService: WikipediaArticleService
     private lateinit var newYorkTimesService: NYTArtistInfoService
-    private lateinit var proxyCollection: MutableList<Proxy>
+    private lateinit var proxyCollection: MutableList<CardProxy>
     private lateinit var broker: Broker
-    private lateinit var biographyRepository: BiographyRepository
+    private lateinit var biographyRepository: CardRepository
     private lateinit var otherInfoHtmlHelper: OtherInfoHtmlHelper
     private lateinit var otherInfoSourceEnumHelper: SourceEnumHelper
     fun init(otherInfoView: OtherInfoView){
@@ -70,15 +70,15 @@ object DependencyInjector {
     }
 
     private fun createProxyCollection() {
-        proxyCollection = mutableListOf<Proxy>()
+        proxyCollection = mutableListOf<CardProxy>()
 
-        val lastFmProxy: Proxy = LastFmProxy(lastFmService)
+        val lastFmProxy: CardProxy = LastFmProxy(lastFmService)
         proxyCollection.add(lastFmProxy)
 
-        val wikipediaProxy: Proxy = WikipediaProxy(wikipediaService)
+        val wikipediaProxy: CardProxy = WikipediaProxy(wikipediaService)
         proxyCollection.add(wikipediaProxy)
 
-        val newYorkTimesProxy: Proxy = NewYorkTimesProxy(newYorkTimesService)
+        val newYorkTimesProxy: CardProxy = NewYorkTimesProxy(newYorkTimesService)
         proxyCollection.add(newYorkTimesProxy)
     }
 
@@ -87,7 +87,7 @@ object DependencyInjector {
     }
 
     private fun createBiographyRepository() {
-        biographyRepository = BiographyRepositoryImpl(localStorage, broker)
+        biographyRepository = CardRepositoryImpl(localStorage, broker)
     }
 
     private fun createOtherInfoPresenter() {

@@ -1,7 +1,7 @@
 package ayds.lisboa.songinfo.moredetails.presentation
 
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
-import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
+import ayds.lisboa.songinfo.moredetails.domain.repository.CardRepository
 import ayds.observer.Observable
 import ayds.observer.Subject
 
@@ -14,7 +14,7 @@ interface OtherInfoPresenter {
     fun searchArtistBiography(artistName: String)
 }
 internal class OtherInfoPresenterImpl (
-    private val biographyRepository: BiographyRepository,
+    private val biographyRepository: CardRepository,
     private val otherInfoHtmlHelper: OtherInfoHtmlHelper,
     private val sourceEnumHelper: SourceEnumHelper
 ) : OtherInfoPresenter {
@@ -36,16 +36,13 @@ internal class OtherInfoPresenterImpl (
     }
 
     private fun updateUiState(cards: List<Card>, artistName: String) {
-        var cardsUiState = mutableListOf<CardUiState>()
+        val cardsUiState = mutableListOf<CardUiState>()
         cards.forEach()
         {
-            val cardUiSate = createCardUiState(
-                it,
-                artistName
-            )
+            val cardUiSate = createCardUiState(it, artistName)
             cardsUiState.add(cardUiSate)
         }
-        var uiState = OtherInfoUiState(cardsUiState)
+        val uiState = OtherInfoUiState(cardsUiState)
         uiStateObservable.notify(uiState)
     }
 
@@ -69,7 +66,7 @@ internal class OtherInfoPresenterImpl (
     }
 
     private fun updateNoResultsUiState() {
-        var cardsUiState = mutableListOf<CardUiState>()
+        val cardsUiState = mutableListOf<CardUiState>()
         val emptyUiState = OtherInfoUiState(cardsUiState)
         uiStateObservable.notify(emptyUiState)
     }

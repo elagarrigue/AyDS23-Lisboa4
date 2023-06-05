@@ -2,7 +2,7 @@ package ayds.lisboa.songinfo.moredetails.data
 
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LocalStorage
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
-import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
+import ayds.lisboa.songinfo.moredetails.domain.repository.CardRepository
 import lisboa4LastFM.ArtistBiography
 import lisboa4LastFM.LastFMService
 import io.mockk.every
@@ -17,8 +17,8 @@ class BiographyRepositoryImplTest {
     private val localStorage: LocalStorage = mockk(relaxUnitFun = true)
     private val lastFMService: LastFMService = mockk(relaxUnitFun = true)
 
-    private val biographyRepository: BiographyRepository by lazy {
-        BiographyRepositoryImpl(localStorage, lastFMService)
+    private val biographyRepository: CardRepository by lazy {
+        CardRepositoryImpl(localStorage, lastFMService)
     }
 
     @Test

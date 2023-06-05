@@ -2,17 +2,17 @@ package ayds.lisboa.songinfo.moredetails.data
 import ayds.lisboa.songinfo.moredetails.data.external.Broker
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LocalStorage
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
-import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
+import ayds.lisboa.songinfo.moredetails.domain.repository.CardRepository
 
-class BiographyRepositoryImpl(
-    private val localStorage: LocalStorage,
-    private val broker: Broker
-): BiographyRepository {
+internal class CardRepositoryImpl(
+    private val CardLocalStorage: LocalStorage,
+    private val CardBroker: Broker
+): CardRepository {
 
     override fun getArtistBiography(artistName: String): List<Card> {
-        var cards = localStorage.getArtistCards(artistName)
+        var cards = CardLocalStorage.getArtistCards(artistName)
         if (cards.isEmpty()) {
-            cards = broker.getCards(artistName)
+            cards = CardBroker.getCards(artistName)
             if (cards.isNotEmpty()) {
                 saveAllCards(artistName, cards)
             }
@@ -24,7 +24,7 @@ class BiographyRepositoryImpl(
     private fun saveAllCards(artistName: String, cards: List<Card>)
     {
         cards.forEach{
-            localStorage.saveArtistCard(artistName, it)
+            CardLocalStorage.saveArtistCard(artistName, it)
         }
     }
 }

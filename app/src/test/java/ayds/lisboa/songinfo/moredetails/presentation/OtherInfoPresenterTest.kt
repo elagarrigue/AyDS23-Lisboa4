@@ -2,7 +2,7 @@ package ayds.lisboa.songinfo.moredetails.presentation
 
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card.ArtistBiography
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card.EmptyBiography
-import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
+import ayds.lisboa.songinfo.moredetails.domain.repository.CardRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -12,7 +12,7 @@ private const val PREFIX = "[*]"
 
 class OtherInfoPresenterImplTest {
 
-    private val biographyRepository: BiographyRepository = mockk()
+    private val biographyRepository: CardRepository = mockk()
     private val otherInfoHtmlHelper: OtherInfoHtmlHelper = mockk()
 
     private val otherInfoPresenter: OtherInfoPresenter by lazy {

@@ -12,7 +12,7 @@ import ayds.lisboa.songinfo.R
 import ayds.lisboa.songinfo.moredetails.dependencyInjector.DependencyInjector
 import com.squareup.picasso.Picasso
 
-class OtherInfoView : AppCompatActivity() {
+class OtherInfoView: AppCompatActivity() {
     private var uiState = OtherInfoUiState(mutableListOf())
     private lateinit var otherInfoPresenter: OtherInfoPresenter
 
@@ -124,7 +124,7 @@ class OtherInfoView : AppCompatActivity() {
     private fun showNoResult() {
         runOnUiThread {
             artistInfoTextView1.visibility = View.VISIBLE
-            artistInfoTextView1.text = "No Results"
+            artistInfoTextView1.text = NO_RESULTS
         }
     }
 

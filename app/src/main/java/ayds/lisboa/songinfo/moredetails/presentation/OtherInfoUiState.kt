@@ -1,5 +1,6 @@
 package ayds.lisboa.songinfo.moredetails.presentation;
 
-data class OtherInfoUiState (
+const val NO_RESULTS = "No Results"
+data class OtherInfoUiState(
     var cardsUiState: List<CardUiState>
-    )
+)
