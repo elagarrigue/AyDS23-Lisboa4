@@ -6,16 +6,16 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 
-interface LocalStorage {
+interface CardLocalStorage {
     fun saveArtistCard(artist: String, card: Card)
     fun getArtistCards(artist: String): List<Card>
 }
 
-internal class LocalStorageImpl(
+internal class CardLocalStorageImpl(
     context: Context,
     private val cursorToCardMapper: CursorToCardMapper,
     ) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION),
-    LocalStorage {
+    CardLocalStorage {
 
     private val projection = arrayOf(
         ID_COLUMN,

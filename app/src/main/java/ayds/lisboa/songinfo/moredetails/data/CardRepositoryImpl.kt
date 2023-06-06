@@ -1,11 +1,11 @@
 package ayds.lisboa.songinfo.moredetails.data
 import ayds.lisboa.songinfo.moredetails.data.external.CardsBroker
-import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LocalStorage
+import ayds.lisboa.songinfo.moredetails.data.local.sqldb.CardLocalStorage
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 import ayds.lisboa.songinfo.moredetails.domain.repository.CardRepository
 
 internal class CardRepositoryImpl(
-    private val cardLocalStorage: LocalStorage,
+    private val cardLocalStorage: CardLocalStorage,
     private val cardBroker: CardsBroker
 ): CardRepository {
 

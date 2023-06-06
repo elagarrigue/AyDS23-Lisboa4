@@ -11,8 +11,8 @@ import ayds.lisboa.songinfo.moredetails.data.external.proxys.NewYorkTimesProxy
 import ayds.lisboa.songinfo.moredetails.data.external.proxys.CardProxy
 import ayds.lisboa.songinfo.moredetails.data.external.proxys.WikipediaProxy
 import ayds.lisboa.songinfo.moredetails.data.local.sqldb.CursorToCardMapperImpl
-import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LocalStorage
-import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LocalStorageImpl
+import ayds.lisboa.songinfo.moredetails.data.local.sqldb.CardLocalStorage
+import ayds.lisboa.songinfo.moredetails.data.local.sqldb.CardLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.domain.repository.CardRepository
 import ayds.lisboa.songinfo.moredetails.presentation.*
 import lisboa4LastFM.*
@@ -23,7 +23,7 @@ object DependencyInjector {
 
     private lateinit var otherInfoView: OtherInfoView
     private lateinit var otherInfoPresenter: OtherInfoPresenter
-    private lateinit var localStorage: LocalStorage
+    private lateinit var cardLocalStorage: CardLocalStorage
     private lateinit var lastFmService: LastFMService
     private lateinit var wikipediaService: WikipediaArticleService
     private lateinit var newYorkTimesService: NYTArtistInfoService
@@ -48,7 +48,7 @@ object DependencyInjector {
 
     private fun createLocalStorage() {
         val cursorToArtistMapper = CursorToCardMapperImpl()
-        localStorage = LocalStorageImpl(otherInfoView as Context, cursorToArtistMapper)
+        cardLocalStorage = CardLocalStorageImpl(otherInfoView as Context, cursorToArtistMapper)
     }
 
     private fun getExternalServices() {
@@ -87,7 +87,7 @@ object DependencyInjector {
     }
 
     private fun createBiographyRepository() {
-        biographyRepository = CardRepositoryImpl(localStorage, cardsBroker)
+        biographyRepository = CardRepositoryImpl(cardLocalStorage, cardsBroker)
     }
 
     private fun createOtherInfoPresenter() {

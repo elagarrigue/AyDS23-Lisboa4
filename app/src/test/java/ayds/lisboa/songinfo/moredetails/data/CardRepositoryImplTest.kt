@@ -1,12 +1,10 @@
 package ayds.lisboa.songinfo.moredetails.data
 
 import ayds.lisboa.songinfo.moredetails.data.external.CardsBroker
-import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LocalStorage
+import ayds.lisboa.songinfo.moredetails.data.local.sqldb.CardLocalStorage
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 import ayds.lisboa.songinfo.moredetails.domain.entities.Source
 import ayds.lisboa.songinfo.moredetails.domain.repository.CardRepository
-import lisboa4LastFM.ArtistBiography
-import lisboa4LastFM.LastFMService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -16,11 +14,11 @@ import org.junit.Test
 
 class CardRepositoryImplTest {
 
-    private val localStorage: LocalStorage = mockk(relaxUnitFun = true)
+    private val cardLocalStorage: CardLocalStorage = mockk(relaxUnitFun = true)
     private val cardsBroker: CardsBroker = mockk(relaxUnitFun = true)
 
     private val biographyRepository: CardRepository by lazy {
-        CardRepositoryImpl(localStorage, cardsBroker)
+        CardRepositoryImpl(cardLocalStorage, cardsBroker)
     }
 
     @Test
@@ -35,7 +33,7 @@ class CardRepositoryImplTest {
         )
         cards.add(card)
 
-        every { localStorage.getArtistCards("artist") } returns cards
+        every { cardLocalStorage.getArtistCards("artist") } returns cards
 
         val result = biographyRepository.getCards("artist")
 
@@ -56,7 +54,7 @@ class CardRepositoryImplTest {
 
         val emptyCards = mutableListOf<Card>()
 
-        every { localStorage.getArtistCards("artist") } returns emptyCards
+        every { cardLocalStorage.getArtistCards("artist") } returns emptyCards
         every { cardsBroker.getCards("artist") } returns cards
 
         val result = biographyRepository.getCards("artist")
@@ -64,14 +62,14 @@ class CardRepositoryImplTest {
         assertEquals(cards, result)
         assertFalse(cards[0].isLocallyStored)
 
-        verify { localStorage.saveArtistCard("artist", card) }
+        verify { cardLocalStorage.saveArtistCard("artist", card) }
     }
 
     @Test
     fun `given non-existing artist cards should return empty cards`() {
         val emptyCards = mutableListOf<Card>()
 
-        every { localStorage.getArtistCards("artist") } returns emptyCards
+        every { cardLocalStorage.getArtistCards("artist") } returns emptyCards
         every { cardsBroker.getCards("artist") } returns emptyCards
 
         val result = biographyRepository.getCards("artist")
