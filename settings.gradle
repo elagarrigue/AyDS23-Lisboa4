@@ -1,3 +1,11 @@
 include ':app'
 include 'observer'
 rootProject.name = "AK Lisboa"
+include ':LastFM_API'
+project(':LastFM_API').projectDir = new File('libs/LastFM_API')
+
+include ':NYTExternal'
+project(':NYTExternal').projectDir = new File('libs/NYTExternal')
+
+include ':WikipediaExternal'
+project(':WikipediaExternal').projectDir = new File('libs/WikipediaExternal')

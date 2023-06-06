@@ -1,0 +1,9 @@
+[submodule "libs/LastFM_API"]
+	path = libs/LastFM_API
+	url = https://github.com/alvaromosconi/LastFM_API
+[submodule "libs/NYTExternal"]
+	path = libs/NYTExternal
+	url = https://github.com/agusdeba/NewYorkTimes-1-module
+[submodule "libs/WikipediaExternal"]
+	path = libs/WikipediaExternal
+	url = https://github.com/MateChola/AyDS-Winchester1-Wikipedia.git

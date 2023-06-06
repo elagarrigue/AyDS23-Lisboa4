@@ -10,17 +10,25 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ayds.lisboa.songinfo.R
 import ayds.lisboa.songinfo.moredetails.dependencyInjector.DependencyInjector
-import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoUiState.Companion.URL_LAST_FM_IMAGE
 import com.squareup.picasso.Picasso
 
-class OtherInfoView : AppCompatActivity() {
-    private var uiState = OtherInfoUiState()
-
-    private lateinit var artistInfoTextView: TextView
-    private lateinit var artistName: String
-    private lateinit var openUrlButtonView: View
-    private lateinit var lastFmImageView: ImageView
+class OtherInfoView: AppCompatActivity() {
+    private var uiState = OtherInfoUiState(mutableListOf())
     private lateinit var otherInfoPresenter: OtherInfoPresenter
+
+    private lateinit var artistName: String
+
+    private lateinit var artistInfoTextView1: TextView
+    private lateinit var openUrlButtonView1: View
+    private lateinit var imageView1: ImageView
+
+    private lateinit var artistInfoTextView2: TextView
+    private lateinit var openUrlButtonView2: View
+    private lateinit var imageView2: ImageView
+
+    private lateinit var artistInfoTextView3: TextView
+    private lateinit var openUrlButtonView3: View
+    private lateinit var imageView3: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,16 +44,42 @@ class OtherInfoView : AppCompatActivity() {
     }
 
     private fun initViews() {
-        lastFmImageView = findViewById(R.id.imageView)
-        artistInfoTextView = findViewById(R.id.artistInfoTextView)
-        openUrlButtonView = findViewById(R.id.openUrlButton)
+        initCard1View()
+        initCard2View()
+        initCard3View()
+    }
+
+    private fun initCard1View(){
+        imageView1 = findViewById(R.id.imageView1)
+        artistInfoTextView1 = findViewById(R.id.artistInfoTextView1)
+        openUrlButtonView1 = findViewById(R.id.openUrlButtonView1)
+        imageView1.visibility = View.GONE
+        artistInfoTextView1.visibility = View.GONE
+        openUrlButtonView1.visibility = View.GONE
+    }
+
+    private fun initCard2View(){
+        imageView2 = findViewById(R.id.imageView2)
+        artistInfoTextView2 = findViewById(R.id.artistInfoTextView2)
+        openUrlButtonView2 = findViewById(R.id.openUrlButtonView2)
+        imageView2.visibility = View.GONE
+        artistInfoTextView2.visibility = View.GONE
+        openUrlButtonView2.visibility = View.GONE
+    }
+
+    private fun initCard3View(){
+        imageView3 = findViewById(R.id.imageView3)
+        artistInfoTextView3 = findViewById(R.id.artistInfoTextView3)
+        openUrlButtonView3 = findViewById(R.id.openUrlButtonView3)
+        imageView3.visibility = View.GONE
+        artistInfoTextView3.visibility = View.GONE
+        openUrlButtonView3.visibility = View.GONE
     }
 
     private fun initDependencyInjector(){
         DependencyInjector.init(this)
         otherInfoPresenter = DependencyInjector.getPresenter()
     }
-
 
     private fun initObservers() {
         otherInfoPresenter.uiStateObservable
@@ -54,8 +88,86 @@ class OtherInfoView : AppCompatActivity() {
 
     private fun updateUiState(uiState: OtherInfoUiState){
         this.uiState = uiState
-        setUrlButton(this.uiState.artistUrl)
-        updateViewInfo(this.uiState.artistInfoHTML)
+        var cont = 1
+        if(this.uiState.cardsUiState.isEmpty()){
+            showNoResult()
+        }else {
+            this.uiState.cardsUiState.forEach {
+                setCardVisible(cont)
+                setUrlButton(it.artistUrl, cont)
+                updateViewInfo(it.artistInfoHTML, cont, it.imageUrl)
+                cont++
+            }
+        }
+    }
+
+    private fun setCardVisible(cont: Int) {
+        when(cont){
+            1 -> runOnUiThread {
+                imageView1.visibility = View.VISIBLE
+                artistInfoTextView1.visibility = View.VISIBLE
+                openUrlButtonView1.visibility = View.VISIBLE
+            }
+            2 -> runOnUiThread {
+                imageView2.visibility = View.VISIBLE
+                artistInfoTextView2.visibility = View.VISIBLE
+                openUrlButtonView2.visibility = View.VISIBLE
+            }
+            3 ->  runOnUiThread {
+                imageView3.visibility = View.VISIBLE
+                artistInfoTextView3.visibility = View.VISIBLE
+                openUrlButtonView3.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun showNoResult() {
+        runOnUiThread {
+            artistInfoTextView1.visibility = View.VISIBLE
+            artistInfoTextView1.text = NO_RESULTS
+        }
+    }
+
+    private fun setUrlButton(artistUrl: String, cont: Int) {
+        when(cont){
+            1 -> openUrlButtonView1.setOnClickListener {
+                            startActivityOnClick(artistUrl)
+                        }
+            2 -> openUrlButtonView2.setOnClickListener {
+                             startActivityOnClick(artistUrl)
+                        }
+            3 -> openUrlButtonView3.setOnClickListener {
+                                startActivityOnClick(artistUrl)
+                            }
+        }
+    }
+
+    private fun updateViewInfo(artistInfo: String, cont: Int, logo: String) {
+        when(cont){
+            1 -> runOnUiThread {
+                            loadLogo(logo, cont)
+                            artistInfoTextView1.text = Html.fromHtml(artistInfo)
+                        }
+            2 -> runOnUiThread {
+                                loadLogo(logo, cont)
+                                artistInfoTextView2.text = Html.fromHtml(artistInfo)
+                            }
+            3 -> runOnUiThread {
+                                    loadLogo(logo, cont)
+                                    artistInfoTextView3.text = Html.fromHtml(artistInfo)
+                                }
+
+        }
+    }
+
+    private fun loadLogo(logo: String, cont: Int) {
+        when(cont){
+            1 -> Picasso.get().load(logo).into(imageView1)
+
+            2 -> Picasso.get().load(logo).into(imageView2)
+
+            3 -> Picasso.get().load(logo).into(imageView3)
+        }
     }
 
     private fun updateArtistInfoView() {
@@ -71,27 +183,10 @@ class OtherInfoView : AppCompatActivity() {
         otherInfoPresenter.searchArtistBiography(artistName)
     }
 
-    private fun setUrlButton(artistUrl: String) {
-        openUrlButtonView.setOnClickListener {
-            startActivityOnClick(artistUrl)
-        }
-    }
-
     private fun startActivityOnClick(artistUrl: String){
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(artistUrl)
         startActivity(intent)
-    }
-
-    private fun updateViewInfo(artistInfo: String) {
-        runOnUiThread {
-            loadLastFMLogo()
-            artistInfoTextView.text = Html.fromHtml(artistInfo)
-        }
-    }
-
-    private fun loadLastFMLogo() {
-        Picasso.get().load(URL_LAST_FM_IMAGE).into(lastFmImageView)
     }
 
     companion object {

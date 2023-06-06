@@ -1,8 +1,7 @@
 package ayds.lisboa.songinfo.moredetails.presentation
 
-import ayds.lisboa.songinfo.moredetails.domain.entities.Biography.ArtistBiography
-import ayds.lisboa.songinfo.moredetails.domain.entities.Biography.EmptyBiography
-import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
+import ayds.lisboa.songinfo.moredetails.domain.entities.Card
+import ayds.lisboa.songinfo.moredetails.domain.repository.CardRepository
 import ayds.observer.Observable
 import ayds.observer.Subject
 
@@ -15,8 +14,9 @@ interface OtherInfoPresenter {
     fun searchArtistBiography(artistName: String)
 }
 internal class OtherInfoPresenterImpl (
-    private val biographyRepository: BiographyRepository,
-    private val otherInfoHtmlHelper: OtherInfoHtmlHelper
+    private val biographyRepository: CardRepository,
+    private val otherInfoHtmlHelper: OtherInfoHtmlHelper,
+    private val sourceEnumHelper: SourceEnumHelper
 ) : OtherInfoPresenter {
 
     override val uiStateObservable = Subject<OtherInfoUiState>()
@@ -27,42 +27,47 @@ internal class OtherInfoPresenterImpl (
     }
 
      private fun searchArtistInfo(artistName: String) {
-        val artistBiography = biographyRepository.getArtistBiography(artistName)
-        when(artistBiography){
-            is ArtistBiography -> updateUiState(artistBiography, artistName)
-            is EmptyBiography -> updateNoResultsUiState()
-        }
+         val cards = biographyRepository.getCards(artistName)
+         if(cards.isEmpty())
+             updateNoResultsUiState()
+         else {
+             updateUiState(cards, artistName)
+         }
     }
 
-    private fun updateUiState(artistBiography: ArtistBiography, artistName: String) {
-        val uiState = createUiState(artistBiography, artistName)
+    private fun updateUiState(cards: List<Card>, artistName: String) {
+        val cardsUiState = mutableListOf<CardUiState>()
+        cards.forEach()
+        {
+            val cardUiSate = createCardUiState(it, artistName)
+            cardsUiState.add(cardUiSate)
+        }
+        val uiState = OtherInfoUiState(cardsUiState)
         uiStateObservable.notify(uiState)
     }
 
-    private fun createUiState(artistBiography: ArtistBiography, artistName: String): OtherInfoUiState{
-        val formattedArtistInfo = getFormattedArtistInfo(artistBiography)
+    private fun createCardUiState(card: Card, artistName: String): CardUiState {
+        val formattedArtistInfo = getFormattedArtistInfo(card)
         val htmlArtistInfo = otherInfoHtmlHelper.textToHtml(formattedArtistInfo, artistName)
-        return OtherInfoUiState(
+        return CardUiState(
             htmlArtistInfo,
-            artistBiography.url,
-            OtherInfoUiState.URL_LAST_FM_IMAGE
+            card.infoUrl,
+            card.sourceLogoUrl,
+            sourceEnumHelper.sourceEnumToString(card.source)
         )
     }
-    private fun getFormattedArtistInfo(artistBiography: ArtistBiography): String {
+    private fun getFormattedArtistInfo(card: Card): String {
         val prefix =
-            if (artistBiography.isLocallyStored)
+            if (card.isLocallyStored)
                 PREFIX
             else
                 DEFAULT_STRING
-        return "$prefix${artistBiography.artistInfo}"
+        return "$prefix${card.description}"
     }
 
     private fun updateNoResultsUiState() {
-        val emptyUiState = OtherInfoUiState(
-                DEFAULT_STRING,
-                DEFAULT_STRING,
-                OtherInfoUiState.URL_LAST_FM_IMAGE
-        )
+        val cardsUiState = mutableListOf<CardUiState>()
+        val emptyUiState = OtherInfoUiState(cardsUiState)
         uiStateObservable.notify(emptyUiState)
     }
 

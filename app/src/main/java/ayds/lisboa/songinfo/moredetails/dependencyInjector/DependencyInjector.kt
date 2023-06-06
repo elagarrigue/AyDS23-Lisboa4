@@ -1,33 +1,43 @@
 package ayds.lisboa.songinfo.moredetails.dependencyInjector
 
 import android.content.Context
-import ayds.lisboa.songinfo.moredetails.data.BiographyRepositoryImpl
-import ayds.lisboa.songinfo.moredetails.data.external.LastFMAPI
-import ayds.lisboa.songinfo.moredetails.data.external.LastFMAPIToBiographyResolver
-import ayds.lisboa.songinfo.moredetails.data.external.LastFMService
-import ayds.lisboa.songinfo.moredetails.data.external.LastFMServiceImpl
-import ayds.lisboa.songinfo.moredetails.data.local.sqldb.CursorToArtistMapperImpl
-import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorage
-import ayds.lisboa.songinfo.moredetails.data.local.sqldb.LastFMLocalStorageImpl
-import ayds.lisboa.songinfo.moredetails.domain.repository.BiographyRepository
+import ayds.NY1.NewYorkTimes.external.DependenciesInjector
+import ayds.NY1.NewYorkTimes.external.NYTArtistInfoService
+import ayds.lisboa.songinfo.moredetails.data.CardRepositoryImpl
+import ayds.lisboa.songinfo.moredetails.data.external.CardsBroker
+import ayds.lisboa.songinfo.moredetails.data.external.CardsBrokerImp
+import ayds.lisboa.songinfo.moredetails.data.external.proxys.LastFmProxy
+import ayds.lisboa.songinfo.moredetails.data.external.proxys.NewYorkTimesProxy
+import ayds.lisboa.songinfo.moredetails.data.external.proxys.CardProxy
+import ayds.lisboa.songinfo.moredetails.data.external.proxys.WikipediaProxy
+import ayds.lisboa.songinfo.moredetails.data.local.sqldb.CursorToCardMapperImpl
+import ayds.lisboa.songinfo.moredetails.data.local.sqldb.CardLocalStorage
+import ayds.lisboa.songinfo.moredetails.data.local.sqldb.CardLocalStorageImpl
+import ayds.lisboa.songinfo.moredetails.domain.repository.CardRepository
 import ayds.lisboa.songinfo.moredetails.presentation.*
-import retrofit2.Retrofit
-import retrofit2.converter.scalars.ScalarsConverterFactory
-
-private const val URL_BASE_API = "https://ws.audioscrobbler.com/2.0/"
+import lisboa4LastFM.*
+import wikipedia.external.external.WikipediaArticleService
+import wikipedia.external.external.WikipediaInjector
 
 object DependencyInjector {
 
     private lateinit var otherInfoView: OtherInfoView
     private lateinit var otherInfoPresenter: OtherInfoPresenter
-    private lateinit var lastFMLocalStorage: LastFMLocalStorage
-    private lateinit var lastFMService: LastFMService
-    private lateinit var biographyRepository: BiographyRepository
+    private lateinit var cardLocalStorage: CardLocalStorage
+    private lateinit var lastFmService: LastFMService
+    private lateinit var wikipediaService: WikipediaArticleService
+    private lateinit var newYorkTimesService: NYTArtistInfoService
+    private lateinit var proxyCollection: MutableList<CardProxy>
+    private lateinit var cardsBroker: CardsBroker
+    private lateinit var biographyRepository: CardRepository
     private lateinit var otherInfoHtmlHelper: OtherInfoHtmlHelper
+    private lateinit var otherInfoSourceEnumHelper: SourceEnumHelper
     fun init(otherInfoView: OtherInfoView){
         setOtherInfoView(otherInfoView)
-        createLastFmLocalStorage()
-        createLastFmService()
+        createLocalStorage()
+        getExternalServices()
+        createProxyCollection()
+        createBroker()
         createBiographyRepository()
         createOtherInfoPresenter()
     }
@@ -36,36 +46,54 @@ object DependencyInjector {
         this.otherInfoView = otherInfoView
     }
 
-    private fun createLastFmLocalStorage() {
-        val cursorToArtistMapper = CursorToArtistMapperImpl()
-        lastFMLocalStorage = LastFMLocalStorageImpl(otherInfoView as Context, cursorToArtistMapper)
+    private fun createLocalStorage() {
+        val cursorToArtistMapper = CursorToCardMapperImpl()
+        cardLocalStorage = CardLocalStorageImpl(otherInfoView as Context, cursorToArtistMapper)
     }
 
-    private fun createLastFmService() {
-        val retrofit = createRetrofit()
-        val lastFMAPI = createLastFMAPI(retrofit)
-        val lastFMAPIToBiographyResolver = LastFMAPIToBiographyResolver()
-        lastFMService = LastFMServiceImpl(lastFMAPIToBiographyResolver, lastFMAPI)
+    private fun getExternalServices() {
+        lastFmService = getLastFMService()
+        wikipediaService = getWikipediaService()
+        newYorkTimesService = getNewYorkTimesService()
     }
 
-    private fun createRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(URL_BASE_API)
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build()
+    private fun getLastFMService(): LastFMService {
+        return LastFMInjector.getLastFmService()
     }
 
-    private fun createLastFMAPI(retrofit: Retrofit): LastFMAPI {
-        return retrofit.create(LastFMAPI::class.java)
+    private fun getWikipediaService(): WikipediaArticleService {
+        return WikipediaInjector.generateWikipediaService()
+    }
+
+    private fun getNewYorkTimesService(): NYTArtistInfoService {
+        return DependenciesInjector.init()
+    }
+
+    private fun createProxyCollection() {
+        proxyCollection = mutableListOf<CardProxy>()
+
+        val lastFmProxy: CardProxy = LastFmProxy(lastFmService)
+        proxyCollection.add(lastFmProxy)
+
+        val wikipediaProxy: CardProxy = WikipediaProxy(wikipediaService)
+        proxyCollection.add(wikipediaProxy)
+
+        val newYorkTimesProxy: CardProxy = NewYorkTimesProxy(newYorkTimesService)
+        proxyCollection.add(newYorkTimesProxy)
+    }
+
+    private fun createBroker() {
+        cardsBroker = CardsBrokerImp(proxyCollection)
     }
 
     private fun createBiographyRepository() {
-        biographyRepository = BiographyRepositoryImpl(lastFMLocalStorage, lastFMService)
+        biographyRepository = CardRepositoryImpl(cardLocalStorage, cardsBroker)
     }
 
     private fun createOtherInfoPresenter() {
         otherInfoHtmlHelper = OtherInfoHtmlHelperImpl()
-        otherInfoPresenter = OtherInfoPresenterImpl(biographyRepository, otherInfoHtmlHelper)
+        otherInfoSourceEnumHelper = SourceEnumHelperImpl()
+        otherInfoPresenter = OtherInfoPresenterImpl(biographyRepository, otherInfoHtmlHelper, otherInfoSourceEnumHelper)
     }
 
     fun getPresenter(): OtherInfoPresenter {

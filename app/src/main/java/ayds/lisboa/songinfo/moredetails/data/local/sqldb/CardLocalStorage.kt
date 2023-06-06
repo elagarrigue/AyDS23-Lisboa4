@@ -4,24 +4,26 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import ayds.lisboa.songinfo.moredetails.domain.entities.Biography.ArtistBiography
+import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 
-interface LastFMLocalStorage {
-    fun saveArtist(artist: String, artistBiography: ArtistBiography)
-    fun getArtistInfo(artist: String): ArtistBiography?
+interface CardLocalStorage {
+    fun saveArtistCard(artist: String, card: Card)
+    fun getArtistCards(artist: String): List<Card>
 }
 
-internal class LastFMLocalStorageImpl(
+internal class CardLocalStorageImpl(
     context: Context,
-    private val cursorToArtistMapper: CursorToArtistMapper,
+    private val cursorToCardMapper: CursorToCardMapper,
     ) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION),
-    LastFMLocalStorage {
+    CardLocalStorage {
 
     private val projection = arrayOf(
         ID_COLUMN,
         ARTIST_COLUMN,
         INFO_COLUMN,
-        URL_COLUMN
+        SOURCE_COLUMN,
+        URL_COLUMN,
+        LOGO_URL_COLUMN
     )
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -29,17 +31,18 @@ internal class LastFMLocalStorageImpl(
     }
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
-    override fun saveArtist(artistName: String, artistBiography: ArtistBiography) {
+    override fun saveArtistCard(artistName: String, card: Card) {
         val values = ContentValues().apply {
             put(ARTIST_COLUMN, artistName)
-            put(INFO_COLUMN, artistBiography.artistInfo)
-            put(SOURCE_COLUMN, 1)
-            put(URL_COLUMN, artistBiography.url)
+            put(INFO_COLUMN, card.description)
+            put(SOURCE_COLUMN, card.source.ordinal)
+            put(URL_COLUMN, card.infoUrl)
+            put(LOGO_URL_COLUMN, card.sourceLogoUrl)
         }
         writableDatabase?.insert(ARTISTS_TABLE, null, values)
     }
 
-    override fun getArtistInfo(artist: String): ArtistBiography? {
+    override fun getArtistCards(artist: String): List<Card> {
         val cursor = readableDatabase.query(
             ARTISTS_TABLE,
             projection,
@@ -49,6 +52,7 @@ internal class LastFMLocalStorageImpl(
             null,
             "$ARTIST_COLUMN DESC"
         )
-        return cursorToArtistMapper.map(cursor)
+        return cursorToCardMapper.map(cursor)
     }
 }
+
